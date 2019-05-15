@@ -43,6 +43,14 @@ config PCIE_DW_MVEBU
 	  Armada-8K SoCs. The PCIe controller on Armada-8K is based on
 	  DesignWare hardware.
 
+config PCIE_ROCKCHIP
+	bool "Enable ROCKCHIP PCIe driver"
+	depends on DM_PCI
+	depends on ROCKCHIP_RK3399
+	help
+	  Say Y here if you want to enable PCIe controller support on
+	  rockchip SoCs.
+
 config PCI_SANDBOX
 	bool "Sandbox PCI support"
 	depends on SANDBOX && DM_PCI
