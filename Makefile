@@ -820,6 +820,10 @@ ifneq ($(CONFIG_BUILD_TARGET),)
 ALL-y += $(CONFIG_BUILD_TARGET:"%"=%)
 endif
 
+ifeq ($(CONFIG_ARCH_ROCKCHIP)$(CONFIG_SPL)$(CONFIG_TPL),yyy)
+ALL-y += idbloader.img
+endif
+
 LDFLAGS_u-boot += $(LDFLAGS_FINAL)
 
 # Avoid 'Not enough room for program headers' error on binutils 2.28 onwards.
@@ -1071,6 +1075,14 @@ OBJCOPYFLAGS_u-boot-with-spl.bin = -I binary -O binary \
 				   --pad-to=$(CONFIG_SPL_PAD_TO)
 u-boot-with-spl.bin: spl/u-boot-spl.bin $(SPL_PAYLOAD) FORCE
 	$(call if_changed,pad_cat)
+
+ifeq ($(CONFIG_ARCH_ROCKCHIP),y)
+MKIMAGEFLAGS_u-boot-tpl.img = -n $(CONFIG_SYS_SOC) -T rksd
+tpl/u-boot-tpl.img: tpl/u-boot-tpl.bin FORCE
+	$(call if_changed,mkimage)
+idbloader.img: tpl/u-boot-tpl.img spl/u-boot-spl.bin FORCE
+	$(call if_changed,cat)
+endif
 
 MKIMAGEFLAGS_lpc32xx-spl.img = -T lpc32xximage -a $(CONFIG_SPL_TEXT_BASE)
 
