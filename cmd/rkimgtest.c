@@ -11,6 +11,7 @@ static int do_rkimg_test(cmd_tbl_t *cmdtp, int flag,
 			 int argc, char *const argv[])
 {
 	struct blk_desc *dev_desc;
+	disk_partition_t part_info;
 	u32 *buffer;
 	int ret;
 
@@ -37,15 +38,29 @@ static int do_rkimg_test(cmd_tbl_t *cmdtp, int flag,
 
 		if (!strcmp("mmc", argv[1]))
 			printf("Found IDB in SDcard\n");
+		else if (!strcmp("nvme", argv[1]))
+			printf("Found IDB in NVME\n");
+		else if (!strcmp("usb", argv[1]))
+			printf("Found IDB in USB\n");
 		else
-			printf("Found IDB in U-disk\n");
+			printf("Found IDB in %s\n", argv[1]);
 
-		/* TAG in IDB */
-		if (0 == buffer[128 + 104 / 4]) {
-			if (!strcmp("mmc", argv[1]))
-				env_update("bootargs", "sdfwupdate");
-			else
-				env_update("bootargs", "usbfwupdate");
+		// add by ahren to check storage is android boot system
+		ret = part_get_info_by_name(dev_desc, "super", &part_info);
+		if (ret != -1) {
+			printf("found super partition.\n");
+			ret = CMD_RET_SUCCESS;
+		} else {
+			/* TAG in IDB */
+			if (buffer[128 + 104 / 4] == 0) {
+				if (!strcmp("mmc", argv[1]))
+					env_update("bootargs", "sdfwupdate");
+				else
+					env_update("bootargs", "usbfwupdate");
+				ret = CMD_RET_SUCCESS;
+			} else {
+				ret = CMD_RET_FAILURE;
+			}
 		}
 	} else if (buffer[0] == 0x534e4b52 || buffer[0] == 0x534e5252) {
 		/* The 0x534e4b52 & 0x534e5252 are the new idb block header tag */
