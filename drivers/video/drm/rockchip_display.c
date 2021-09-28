@@ -1368,6 +1368,8 @@ static int load_bmp_logo(struct logo_info *logo, const char *bmp_name)
 {
 	struct rockchip_logo_cache *logo_cache;
 	struct bmp_header *header;
+	struct bmp_header *logo_bmp = NULL;
+	unsigned long lenp = ~0UL;
 	void *dst = NULL, *pdst;
 	int size, len;
 	int ret = 0;
@@ -1400,6 +1402,18 @@ static int load_bmp_logo(struct logo_info *logo, const char *bmp_name)
 		logo_source = FROM_DISTRO;
     } else {
 		free(header);
+		logo_bmp = malloc(LOGO_MAX_SIZE);
+		if (!logo_bmp)
+			return -ENOMEM;
+
+		if (gunzip(logo_bmp, LOGO_MAX_SIZE,
+			(uchar *) logo_bmp_gzip, &lenp) != 0) {
+			printf("%s: error uncompressed logo_bmp!\n", __func__);
+			free(logo_bmp);
+			return 1;
+		} else {
+			printf("logo_bmp uncompressed size=%ld\n", lenp);
+		}
 		header = (struct bmp_header *)logo_bmp;
 		logo_source = FROM_INTERNEL;
 	}
