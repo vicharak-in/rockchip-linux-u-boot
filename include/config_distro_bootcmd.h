@@ -388,8 +388,8 @@
 		"echo Scanning ${devtype} "                               \
 				"${devnum}:${distro_bootpart}...; "       \
 		"for prefix in ${boot_prefixes}; do "                     \
-			"run scan_dev_for_extlinux; "                     \
 			"run scan_dev_for_scripts; "                      \
+			"run scan_dev_for_extlinux; "                     \
 		"done;"                                                   \
 		SCAN_DEV_FOR_EFI                                          \
 		"\0"                                                      \
