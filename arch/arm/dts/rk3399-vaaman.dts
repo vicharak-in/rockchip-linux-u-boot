@@ -528,6 +528,7 @@
 	supports-sd;
 	supports-emmc;
 	bus-width = <4>;
+	mmc-broken-hs;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	disable-wp;
