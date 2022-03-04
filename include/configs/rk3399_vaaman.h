@@ -12,6 +12,7 @@
 		"stderr=serial,vidconsole\0"
 
 #define CONFIG_SYS_MMC_ENV_DEV		1	/* eMMC */
+#define CONFIG_SYS_MMC_MAX_BLK_COUNT	32768
 
 #include <configs/rk3399_common.h>
 
