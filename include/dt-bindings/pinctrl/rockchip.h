@@ -68,4 +68,14 @@
 #define RK_FUNC_14	14
 #define RK_FUNC_15	15
 
+// PCA9554 GPIO expander
+#define PCA_IOE_0	0
+#define PCA_IOE_1	1
+#define PCA_IOE_2	2
+#define PCA_IOE_3	3
+#define PCA_IOE_4	4
+#define PCA_IOE_5	5
+#define PCA_IOE_6	6
+#define PCA_IOE_7	7
+
 #endif
