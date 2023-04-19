@@ -12,7 +12,7 @@ if [ "$1" = "rk3399" ]; then
 elif [ "$1" = "rk3588" ]; then
 	DEVICE="axon"
 	echo "Building U-Boot for RK3588"
-	./make.sh rk3588
+	./make.sh rk3588-axon
 elif [ "$1" = "clean" ]; then
 	make clean -j$(nproc --all) && make distclean -j$(nproc --all)
 	exit 0
