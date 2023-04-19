@@ -22,7 +22,7 @@ else
 fi
 
 # Build U-Boot
-./make.sh
+./make.sh --idblock
 
 # Create output directory if it doesn't exist
 if [ "$1" = "rk3399" ]; then
