@@ -29,6 +29,34 @@ config TARGET_PUMA_RK3399
 	   * HDMI, eDP, MIPI-DSI, MIPI-DSI/CSI and MIPI-CSI
 	   * SPI, I2C, I2S, UART, GPIO, ...
 
+config TARGET_RK3399_VAAMAN
+	bool "Vicharak RK3399 Vaaman board"
+	select BOARD_LATE_INIT
+	help
+	  The Vaaman is a Single Board Computer (SBC) designed by Vicharak,
+	  which is powered by the RK3399 processor.
+	  It features a 2 x Cortex-ARM A72 MPCore processor and 4 x ARM Cortex-A53 MPCore processor.
+	  ARM Mali-T860MP4 GPU, and 2GB LPDDR4-3200 SDRAM.
+	  16GB/32GB/128GB high-speed eMMC storage options,
+	  microSD (TF) card slot, and PCIE for extended SSD.
+
+	  1 x HDMI 2.0 (Micro) and 1 x MIPI display output,
+	  3.5mm jack with a mic for audio, 10/100/1000Mbps Ethernet,
+	  MIPI CSI 2 lanes via FPC connector for cameras,
+	  and integrated WiFi combo module supporting 2.4G+5G WiFi 2T2R and BT5.0.
+
+	  It also has a PCIe interface, USB 2.0 and 3.0 ports, RTC, and a variety of IO options,
+	  including UART, SPI bus, I2C bus, PCM/I2S, SPDIF, PWM, ADC, and GPIO.
+
+	  Additionally, it features an LVDS tx and rx interface connector that supports 20 lanes,
+	  LPDDR3 256Mbits x 16 bits memory,
+
+	  MIPI-CSI RX connector with 4 data lanes and 1 clock lane,
+	  MIPI-CSI TX connector with 4 data lanes and 1 clock lane,
+	  JTAG headers for configuration,
+	  a 40-pin GPIO header supported with 1 PMOD and 2 LVDS lanes, and five different oscillators.
+
+
 endchoice
 
 config SYS_SOC
@@ -42,5 +70,6 @@ config SPL_STACK_R_ADDR
 
 source "board/rockchip/evb_rk3399/Kconfig"
 source "board/theobroma-systems/puma_rk3399/Kconfig"
+source "board/rockchip/rk3399_vaaman/Kconfig"
 
 endif
