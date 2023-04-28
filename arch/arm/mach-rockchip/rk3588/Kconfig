@@ -12,6 +12,28 @@ config SYS_SOC
 config SYS_MALLOC_F_LEN
 	default 0x400
 
+config TARGET_RK3588_AXON
+	bool "Vicharak RK3588 Axon board"
+	select BOARD_LATE_INIT
+	help
+	  The Axon is a Single Board Computer (SBC) designed by Vicharak,
+	  which is powered by the RK3588 processor.
+
+	  The board features a dual-channel DDR4 RAM configuration
+	  with a total capacity of 8GB, as well as storage options
+	  including SATA, NVMe, eMMC, and SDMMC.
+
+	  Other notable features include a 1GBps LAN connection,
+	  RTL8852BS-based WiFi and Bluetooth module,
+	  ES8388 Audio codec support, MIPI CSI RX x 2,
+	  MIPI DCPHY RX x 2, MIPI DCPHY TX x 2 and 3 x PCIe 2.0 and 1 x 3.0 slots.
+
+	  The Axon also includes a variety of header pins
+	  for UART, I2C, SPI, and SARADC connectivity,
+	  as well as micro HDMI ports and
+	  2 x USB Type-C connectors for power delivery, 3.1 USB and DP.
+
 source board/rockchip/evb_rk3588/Kconfig
+source board/rockchip/rk3588_axon/Kconfig
 
 endif
