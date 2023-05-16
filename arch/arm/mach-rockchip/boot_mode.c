@@ -40,6 +40,7 @@ static int misc_require_recovery(u32 bcb_offset, int *bcb_recovery_msg)
 	bmsg = memalign(ARCH_DMA_MINALIGN, cnt * dev_desc->blksz);
 	if (blk_dread(dev_desc, part.start + bcb_offset, cnt, bmsg) != cnt) {
 		recovery = 0;
+		bcb_recovery_msg = BCB_MSG_RECOVERY_NONE;
 	} else {
 		recovery = !strcmp(bmsg->command, "boot-recovery");
 		if (bcb_recovery_msg) {
@@ -48,6 +49,10 @@ static int misc_require_recovery(u32 bcb_offset, int *bcb_recovery_msg)
 			else if (!strcmp(bmsg->recovery, "recovery\n--factory_mode=whole") ||
 				 !strcmp(bmsg->recovery, "recovery\n--factory_mode=small"))
 				*bcb_recovery_msg = BCB_MSG_RECOVERY_PCBA;
+			else if (!strcmp(bmsg->recovery, "recovery\n--wipe_data"))
+				*bcb_recovery_msg = BCB_MSG_RECOVERY_WIPE_USERDATA;
+			else
+				*bcb_recovery_msg = BCB_MSG_RECOVERY_NONE;
 		}
 	}
 

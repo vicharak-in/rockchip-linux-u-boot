@@ -11,6 +11,7 @@
 #include <android_avb/rk_avb_ops_user.h>
 #include <android_image.h>
 #include <android_ab.h>
+#include <asm/arch/boot_mode.h>
 #include <bootm.h>
 #include <asm/arch/hotkey.h>
 #include <cli.h>
@@ -936,15 +937,25 @@ int android_bootloader_boot_flow(struct blk_desc *dev_desc,
 
 		mode = android_bootloader_load_and_clear_mode(dev_desc,
 							      &misc_part_info);
+		switch (mode) {
+		case ANDROID_BOOT_MODE_RECOVERY:
+			if (get_bcb_recovery_msg() == BCB_MSG_RECOVERY_WIPE_USERDATA) {
+				env_update("bootargs", "androidboot.selinux=permissive");
+				printf("ANDROID: reboot reason: \"%s --wipe-data\"\n",
+						android_boot_mode_str(mode));
+			}
+			break;
 #ifdef CONFIG_RKIMG_BOOTLOADER
-		if (mode == ANDROID_BOOT_MODE_NORMAL) {
+		case ANDROID_BOOT_MODE_NORMAL:
 			if (rockchip_get_boot_mode() == BOOT_MODE_RECOVERY)
 				mode = ANDROID_BOOT_MODE_RECOVERY;
-		}
 #endif
+		default:
+			printf("ANDROID: reboot reason: \"%s\"\n", android_boot_mode_str(mode));
+			break;
+		}
 	}
 
-	printf("ANDROID: reboot reason: \"%s\"\n", android_boot_mode_str(mode));
 #ifdef CONFIG_ANDROID_AB
 	/* Get current slot_suffix */
 	if (ab_get_slot_suffix(slot_suffix))
