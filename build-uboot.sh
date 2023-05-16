@@ -3,19 +3,25 @@
 # Build U-Boot scipts for vaaman and axon
 
 DEVICE=$1
+ANDROID=$2
+JOBS=$(nproc --all)
 DATE=$(date +%Y%m%d)
 
 # vaaman and axon
 if [ "$DEVICE" == "vaaman" ]; then
 	DEVICE="vaaman"
 	echo "Building U-Boot for vaaman"
-	./make.sh rk3399-vaaman
+	if [ -z "$ANDROID" ]; then
+		./make.sh rk3399-vaaman
+	else
+		./make.sh rk3399-vaaman-android
+	fi
 elif [ "$DEVICE" == "axon" ]; then
 	DEVICE="axon"
 	echo "Building U-Boot for axon"
 	./make.sh rk3588-axon
 elif [ "$DEVICE" == "clean" ]; then
-	make clean -j$(nproc --all) && make distclean -j$(nproc --all)
+	make clean -j "${JOBS}" && make distclean -j "${JOBS}"
 	exit 0
 else
 	echo "Usage: ./build-uboot.sh vaaman|axon|clean"
