@@ -525,6 +525,7 @@ function pack_idblock()
 	# pack
 	rm idblock.bin -f
 	./tools/mkimage -n ${PLAT} -T rksd -d ${TPL_BIN}:${SPL_BIN} idblock.bin
+	cp idblock.bin idbloader.img
 	echo "Input:"
 	echo "    ${INI}"
 	echo "    ${TPL_BIN}"
