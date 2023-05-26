@@ -257,3 +257,9 @@
 	// End of Leds }}}
 };
 // End of Pinctrl }}}
+
+// SPI (Disabled): {{{
+&sfc {
+	status = "disabled";
+};
+// End of SPI }}}
