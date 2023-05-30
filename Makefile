@@ -1087,7 +1087,13 @@ endif
 
 # TPL + SPL
 ifeq ($(CONFIG_SPL)$(CONFIG_TPL),yy)
+ifeq ($(CONFIG_ROCKCHIP_RK3399),y)
+MKIMAGEFLAGS_u-boot-tpl-rockchip.bin = -n rk3399 -T $(ROCKCHIP_IMG_TYPE)
+else ifeq ($(CONFIG_ROCKCHIP_RK3588),y)
+MKIMAGEFLAGS_u-boot-tpl-rockchip.bin = -n rk3588 -T $(ROCKCHIP_IMG_TYPE)
+else
 MKIMAGEFLAGS_u-boot-tpl-rockchip.bin = -n $(CONFIG_SYS_SOC) -T $(ROCKCHIP_IMG_TYPE)
+endif
 tpl/u-boot-tpl-rockchip.bin: tpl/u-boot-tpl.bin FORCE
 	$(call if_changed,mkimage)
 idbloader.img: tpl/u-boot-tpl-rockchip.bin spl/u-boot-spl.bin FORCE
