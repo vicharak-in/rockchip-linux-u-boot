@@ -89,3 +89,5 @@ GTAGS
 \#*#
 
 vaaman/
+tools/boot
+tools/spl_size_limit
