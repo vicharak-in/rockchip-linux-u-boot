@@ -482,19 +482,11 @@
 };
 // End of Pinctrl }}}
 
-// PWM: {{{
-&pwm0 {
-	status = "okay";
-};
-
+// PWM 2: {{{
 &pwm2 {
 	status = "okay";
 };
-
-&pwm3 {
-	status = "okay";
-};
-// End of PWM }}}
+// End of PWM 2 }}}
 
 // Rockchip Crypto: {{{
 &crypto {
