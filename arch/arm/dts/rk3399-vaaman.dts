@@ -98,18 +98,6 @@
 		regulator-max-microvolt = <900000>;
 		vin-supply = <&vcc3v3_sys>;
 	};
-
-	vcc3v3_pcie: vcc3v3-pcie-regulator {
-		compatible = "regulator-fixed";
-		enable-active-high;
-		gpio = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pcie_pwr_en>;
-		regulator-name = "vcc3v3_pcie";
-		regulator-always-on;
-		regulator-boot-on;
-		vin-supply = <&vcc5v0_sys>;
-	};
 	// End of Regulators }}}
 };
 
@@ -438,7 +426,7 @@
 	pinctrl-0 = <&pcie_clkreqnb_cpm>;
 	vpcie0v9-supply = <&vcc_0v9>;
 	vpcie1v8-supply = <&vcc_1v8>;
-	vpcie3v3-supply = <&vcc3v3_pcie>;
+	vpcie3v3-supply = <&vcc3v3_sys>;
 	status = "okay";
 };
 // End of PCIE }}}
