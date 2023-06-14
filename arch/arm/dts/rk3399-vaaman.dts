@@ -59,6 +59,7 @@
 	};
 
 	vcc_phy: vcc-phy-regulator {
+		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_phy";
 		regulator-always-on;
@@ -66,6 +67,7 @@
 	};
 
 	vcc5v0_host: vcc5v0-host-en {
+		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_host";
 		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
@@ -79,6 +81,7 @@
 	};
 
 	vbus_typec: vcc5v0-typec-regulator {
+		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
 		enable-active-high;
 		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
@@ -90,6 +93,7 @@
 	};
 
 	vcc_0v9: vcc-0v9 {
+		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_0v9";
 		regulator-always-on;
