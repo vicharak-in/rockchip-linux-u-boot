@@ -482,7 +482,6 @@ io_mode(int fd, int n)
 #endif
 #endif
 
-		return OK;
 	default:
 		return ERROR;
 	}
