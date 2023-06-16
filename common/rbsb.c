@@ -24,7 +24,7 @@
 
 /*
  *  Rev 05-05-1988
- *  ============== (not quite, but originated there :-). -- uwe 
+ *  ============== (not quite, but originated there :-). -- uwe
  */
 #include "zglobal.h"
 
@@ -130,7 +130,7 @@ getspeed(int  code)
  *  different line
  */
 int Fromcu;		/* Were called from cu or yam */
-int 
+int
 from_cu(void)
 {
 #if 0
@@ -148,10 +148,10 @@ from_cu(void)
 	fstat(1, &a); fstat(2, &b);
 
 #if defined(major) && defined(minor)
-	if (major(a.st_rdev) != major(b.st_rdev) 
+	if (major(a.st_rdev) != major(b.st_rdev)
 		|| minor(a.st_rdev) != minor(b.st_rdev))
 		Fromcu=1;
-	else if (major(a.st_dev) != major(b.st_dev) 
+	else if (major(a.st_dev) != major(b.st_dev)
 		|| minor(a.st_dev) != minor(b.st_dev))
 		Fromcu=1;
 	else
@@ -176,7 +176,7 @@ int Twostop;		/* Use two stop bits */
 /*
  *  Return non 0 if something to read from io descriptor f
  */
-int 
+int
 rdchk(int fd)
 {
 	static long lf;
@@ -191,7 +191,7 @@ unsigned char checked = '\0' ;
 /*
  * Nonblocking I/O is a bit different in System V, Release 2
  */
-int 
+int
 rdchk(int fd)
 {
 	int lf, savestat;
@@ -206,7 +206,7 @@ rdchk(int fd)
 	if (-1==fcntl(fd, F_SETFL, savestat)) {
 #ifdef ENABLE_SYSLOG
 		if (enable_syslog)
-			lsyslog(LOG_CRIT,"F_SETFL failed in rdchk(): %s",	
+			lsyslog(LOG_CRIT,"F_SETFL failed in rdchk(): %s",
 				strerror(errno));
 #endif
 		zpfatal("rdchk: F_SETFL failed\n"); /* lose */
@@ -215,7 +215,7 @@ rdchk(int fd)
 		 * fd, but we try.
 		 */
 		canit(fd);
-		exit(1); 
+		exit(1);
 	}
 #else
 	fcntl(fd, F_SETFL, savestat | O_NDELAY);
@@ -246,10 +246,10 @@ struct termio oldtty, tty;
  * mode(n)
  *  3: save old tty stat, set raw mode with flow control
  *  2: set XON/XOFF for sb/sz with ZMODEM or YMODEM-g
- *  1: save old tty stat, set raw mode 
+ *  1: save old tty stat, set raw mode
  *  0: restore original tty mode
  */
-int 
+int
 io_mode(int fd, int n)
 {
 #if 1
@@ -321,7 +321,7 @@ io_mode(int fd, int n)
 		tty.c_cflag &= ~(PARENB);	/* Same baud rate, disable parity */
 		/* Set character size = 8 */
 		tty.c_cflag &= ~(CSIZE);
-		tty.c_cflag |= CS8;	
+		tty.c_cflag |= CS8;
 		if (Twostop)
 			tty.c_cflag |= CSTOPB;	/* Set two stop bits */
 #ifdef NFGVMIN
