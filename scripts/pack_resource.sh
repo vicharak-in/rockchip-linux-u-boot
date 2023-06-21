@@ -11,7 +11,11 @@ RSCE_NEW=resource.img
 BOOT_OLD=$1
 BOOT_NEW=boot.img
 
+if [ -f "rkbin/tools/resource_tool" ]; then
+TOOL=rkbin/tools/resource_tool
+else
 TOOL=../rkbin/tools/resource_tool
+fi
 IMAGES=./tools/images/
 TMP_DIR=.resource_tmp
 TMP_DIR2=.boot_tmp

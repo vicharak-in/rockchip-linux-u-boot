@@ -50,6 +50,10 @@ if [ ${BIN_KB} -gt ${MAX_KB} ]; then
 	exit 1
 fi
 
+if [ -f "rkbin/tools/loaderimage" ]; then
+./rkbin/tools/loaderimage --pack --uboot u-boot.bin uboot.img ${LOAD_ADDR} ${SIZE}
+else
 ../rkbin/tools/loaderimage --pack --uboot u-boot.bin uboot.img ${LOAD_ADDR} ${SIZE}
+fi
 echo "pack uboot okay! Input: u-boot.bin"
 echo

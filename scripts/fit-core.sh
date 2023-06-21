@@ -27,7 +27,11 @@ KERNEL_ADDR_PLACEHOLDER="0xffffff01"
 RAMDISK_ADDR_PLACEHOLDER="0xffffff02"
 # tools
 MKIMAGE="./tools/mkimage"
+if [ -f "rkbin/tools/rk_sign_tool" ]; then
+RK_SIGN_TOOL="rkbin/tools/rk_sign_tool"
+else
 RK_SIGN_TOOL="../rkbin/tools/rk_sign_tool"
+fi
 FIT_UNPACK="./scripts/fit-unpack.sh"
 CHECK_SIGN="./tools/fit_check_sign"
 # key
