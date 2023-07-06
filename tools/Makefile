@@ -63,6 +63,7 @@ hostprogs-y += boot_merger
 hostprogs-y += trust_merger
 hostprogs-y += loaderimage
 hostprogs-y += resource_tool
+hostprogs-y += hex2bmp
 hostprogs-y += bmp2gray16
 
 boot_merger-objs := rockchip/boot_merger.o rockchip/sha2.o lib/sha256.o
