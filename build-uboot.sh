@@ -13,13 +13,13 @@ DATE=$(date +%Y%m%d)
 # patch to modify make.sh to use system compiler
 PATCH=$(cat << EOF
 diff --git a/make.sh b/make.sh
-index 6abf059c5d..fc5d3b2704 100755
+index 4b92b1f176..7a41b6b1ac 100755
 --- a/make.sh
 +++ b/make.sh
-@@ -12,8 +12,8 @@ CMD_ARGS=$1
-
- ########################################### User can modify #############################################
- RKBIN_TOOLS=rkbin/tools
+@@ -16,8 +16,8 @@ RKBIN_TOOLS=rkbin/tools
+ else
+ RKBIN_TOOLS=../rkbin/tools
+ fi
 -CROSS_COMPILE_ARM32=../prebuilts/gcc/linux-x86/arm/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
 -CROSS_COMPILE_ARM64=../prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 +CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabihf-
