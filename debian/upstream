@@ -1,0 +1,4 @@
+GIT=https://github.com/vicharak-in/u-boot-vicharak.git
+COMMIT=471f11f57f3499b71c0830a55d14a62422179d4d
+BRANCH=master
+VERSION=2017.09+20230722.git471f11f5

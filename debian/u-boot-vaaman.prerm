@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+remove)
+	update-alternatives --remove \
+		u-boot-rk3399-vaaman-idbloader \
+		/usr/lib/u-boot-rk3399-vaaman/idbloader.img
+
+	update-alternatives --remove \
+		u-boot-rk3399-vaaman-uboot \
+		/usr/lib/u-boot-rk3399-vaaman/u-boot.img
+
+	update-alternatives --remove \
+		u-boot-rk3399-vaaman-trust \
+		/usr/lib/u-boot-rk3399-vaaman/trust.img
+	;;
+
+failed-upgrade | deconfigure) ;;
+
+*)
+	echo "prerm called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0

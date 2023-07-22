@@ -1,0 +1,46 @@
+#!/bin/sh
+
+set -e
+
+__get_root_dev() {
+	realpath "$(findmnt --nofsroot --noheadings --output SOURCE /)"
+}
+
+__get_block_dev() {
+	echo "/dev/$(udevadm info --query=path "--name=$(__get_root_dev)" | awk -F'/' '{print $(NF-1)}')"
+}
+
+dev=$(__get_block_dev)
+
+if [ -z "$dev" ]; then
+	echo "No block device found for $1"
+	exit 0
+fi
+
+uboot_part=$(parted -s "${dev}" print | grep "uboot" | awk '{print $1}')
+trust_part=$(parted -s "${dev}" print | grep "trust" | awk '{print $1}')
+
+if [ -z "$uboot_part" ] || [ -z "$trust_part" ]; then
+	echo "No partition found for $1"
+	exit 0
+fi
+
+case "$1" in
+configure | upgrade)
+	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/idbloader.img of=${dev} seek=64
+	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/uboot.img of=${dev}p${uboot_part}
+	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/trust.img of=${dev}p${trust_part}
+	sync
+	;;
+
+abort-upgrade | abort-remove | abort-deconfigure) ;;
+
+*)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0
