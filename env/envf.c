@@ -44,16 +44,6 @@ static const char *envf_list[ENVF_MAX];
 #endif
 
 #ifdef CONFIG_DM_MMC
-static int pmbr_part_valid(struct partition *part)
-{
-	if (part->sys_ind == EFI_PMBR_OSTYPE_EFI_GPT &&
-		get_unaligned_le32(&part->start_sect) == 1UL) {
-		return 1;
-	}
-
-	return 0;
-}
-
 static int is_pmbr_valid(legacy_mbr * mbr)
 {
 	int i = 0;
@@ -62,10 +52,10 @@ static int is_pmbr_valid(legacy_mbr * mbr)
 		return 0;
 
 	for (i = 0; i < 4; i++) {
-		if (pmbr_part_valid(&mbr->partition_record[i])) {
+		if (mbr->partition_record[i].sys_ind == 0xc)
 			return 1;
-		}
 	}
+
 	return 0;
 }
 
@@ -76,10 +66,10 @@ static int can_find_pmbr(struct blk_desc *dev_desc)
 	/* Read legacy MBR from block 0 and validate it */
 	if ((blk_dread(dev_desc, 0, 1, (ulong *)legacymbr) != 1)
 		|| (is_pmbr_valid(legacymbr) != 1)) {
-		return -1;
+		return 0;
 	}
 
-	return 0;
+	return 1;
 }
 #endif
 
@@ -262,35 +252,6 @@ static int envf_init_vars(void)
 	return envf_num;
 }
 
-#ifdef CONFIG_ENV_PARTITION
-static int envf_add_partition_bootargs(void)
-{
-	char *part_list;
-	char *bootargs;
-	int i;
-
-	for (i = 0; i < ARRAY_SIZE(part_type); i++) {
-		part_list = env_get(part_type[i]);
-		if (part_list)
-			break;
-	}
-	if (!part_list)
-		return -EINVAL;
-
-	bootargs = calloc(1, strlen(part_list) + strlen(part_type[i]) + 2);
-	if (!bootargs)
-		return -ENOMEM;
-
-	strcat(bootargs, part_type[i]);
-	strcat(bootargs, "=");
-	strcat(bootargs, part_list);
-	env_update("bootargs", bootargs);
-	free(bootargs);
-
-	return 0;
-}
-#endif
-
 static int envf_load(void)
 {
 	struct blk_desc *desc;
@@ -313,10 +274,6 @@ static int envf_load(void)
 			return -EINTR;
 		}
 	}
-
-#ifdef CONFIG_ENV_PARTITION
-	envf_add_partition_bootargs();
-#endif
 
 	return 0;
 }
