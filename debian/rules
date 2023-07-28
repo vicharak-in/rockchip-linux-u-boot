@@ -27,18 +27,18 @@ ${BOARD}:
 	@cp -v vaaman/trust-${DATE}.img debian/build/$@/trust.img
 
 binary-${BOARD}:
-	@rm -rf debian/tmp && mkdir -m 755 -p debian/tmp/u-boot/usr/lib/u-boot-${BOARD}
-	@cp -v debian/build/${BOARD}/uboot.img debian/tmp/u-boot/usr/lib/u-boot-${BOARD}/uboot.img
-	@cp -v debian/build/${BOARD}/trust.img debian/tmp/u-boot/usr/lib/u-boot-${BOARD}/trust.img
-	@cp -v debian/build/${BOARD}/idbloader.img debian/tmp/u-boot/usr/lib/u-boot-${BOARD}/idbloader.img
+	@rm -rf debian/tmp && mkdir -m 755 -p debian/tmp/u-boot/usr/lib/u-boot/${BOARD}
+	@cp -v debian/build/${BOARD}/uboot.img debian/tmp/u-boot/usr/lib/u-boot/${BOARD}/uboot.img
+	@cp -v debian/build/${BOARD}/trust.img debian/tmp/u-boot/usr/lib/u-boot/${BOARD}/trust.img
+	@cp -v debian/build/${BOARD}/idbloader.img debian/tmp/u-boot/usr/lib/u-boot/${BOARD}/idbloader.img
 
 	@mkdir -m 755 -p "debian/tmp/u-boot/DEBIAN"
 	@cp debian/u-boot-vaaman.postinst "debian/tmp/u-boot/DEBIAN/postinst"
 	@cp debian/u-boot-vaaman.prerm "debian/tmp/u-boot/DEBIAN/prerm"
-	@mkdir -p "debian/tmp/u-boot/usr/share/doc/u-boot-${BOARD}"
-	@cp debian/copyright "debian/tmp/u-boot/usr/share/doc/u-boot-${BOARD}"
-	@cp debian/changelog "debian/tmp/u-boot/usr/share/doc/u-boot-${BOARD}/changelog.Debian"
-	@gzip -9 "debian/tmp/u-boot/usr/share/doc/u-boot-${BOARD}/changelog.Debian"
+	@mkdir -p "debian/tmp/u-boot/usr/share/doc/u-boot/${BOARD}"
+	@cp debian/copyright "debian/tmp/u-boot/usr/share/doc/u-boot/${BOARD}"
+	@cp debian/changelog "debian/tmp/u-boot/usr/share/doc/u-boot/${BOARD}/changelog.Debian"
+	@gzip -9 "debian/tmp/u-boot/usr/share/doc/u-boot/${BOARD}/changelog.Debian"
 	@sh -c "cd 'debian/tmp/u-boot'; find . -type f ! -path './DEBIAN/*' -printf '%P\0' | xargs -r0 md5sum > DEBIAN/md5sums"
 	@chown -R root:root "debian/tmp/u-boot" && chmod -R go-w "debian/tmp/u-boot" && chmod -R a+rX "debian/tmp/u-boot"
 	@dpkg-gencontrol -pu-boot-${BOARD} -P"debian/tmp/u-boot"
