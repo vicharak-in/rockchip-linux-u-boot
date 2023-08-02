@@ -27,9 +27,9 @@ fi
 
 case "$1" in
 configure | upgrade)
-	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/idbloader.img of=${dev} seek=64
-	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/uboot.img of=${dev}p${uboot_part}
-	sudo dd if=/usr/lib/u-boot-rk3399-vaaman/trust.img of=${dev}p${trust_part}
+	sudo dd if=/usr/lib/u-boot/rk3399-vaaman/idbloader.img of=${dev} seek=64
+	sudo dd if=/usr/lib/u-boot/rk3399-vaaman/uboot.img of=${dev}p${uboot_part}
+	sudo dd if=/usr/lib/u-boot/rk3399-vaaman/trust.img of=${dev}p${trust_part}
 	sync
 	;;
 
