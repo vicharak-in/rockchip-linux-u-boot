@@ -1214,6 +1214,19 @@ int rockchip_dw_hdmi_qp_prepare(struct rockchip_connector *conn, struct display_
 	return 0;
 }
 
+int rockchip_dw_hdmi_qp_check(struct rockchip_connector *conn, struct display_state *state)
+{
+	struct crtc_state *cstate = &state->crtc_state;
+	struct rockchip_crtc *crtc = cstate->crtc;
+	struct dw_hdmi_qp *hdmi = conn->data;
+
+	/* clear hdmi uboot logo on flag */
+	if (crtc->splice_mode && cstate->crtc_id == 1)
+		hdmi_writel(hdmi, 0, I2CM_INTERFACE_CONTROL0);
+
+	return 0;
+}
+
 static void dw_hdmi_disable(struct rockchip_connector *conn, struct dw_hdmi_qp *hdmi,
 			    struct display_state *state)
 {
@@ -1252,11 +1265,16 @@ static void rockchip_dw_hdmi_qp_mode_valid(struct dw_hdmi_qp *hdmi)
 {
 	struct hdmi_edid_data *edid_data = &hdmi->edid_data;
 	int i;
+	bool enable_gpio = dw_hdmi_qp_check_enable_gpio(hdmi->rk_hdmi);
 
 	for (i = 0; i < edid_data->modes; i++) {
 		if (edid_data->mode_buf[i].invalid)
 			continue;
+
 		if (edid_data->mode_buf[i].clock <= 25000)
+			edid_data->mode_buf[i].invalid = true;
+
+		if (edid_data->mode_buf[i].clock > 600000 && !enable_gpio)
 			edid_data->mode_buf[i].invalid = true;
 	}
 }

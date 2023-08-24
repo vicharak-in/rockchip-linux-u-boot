@@ -1001,7 +1001,9 @@ static int display_logo(struct display_state *state)
 	}
 
 	display_check(state);
-	display_set_plane(state);
+	ret = display_set_plane(state);
+	if (ret)
+		return ret;
 	display_enable(state);
 
 	return 0;
@@ -1358,16 +1360,36 @@ int rockchip_show_bmp(const char *bmp)
 int rockchip_show_logo(void)
 {
 	struct display_state *s;
+	struct display_state *ms = NULL;
 	int ret = 0;
+	int count = 0;
 
 	list_for_each_entry(s, &rockchip_display_list, head) {
 		s->logo.mode = s->logo_mode;
-		if (load_bmp_logo(&s->logo, s->ulogo_name))
+		if (load_bmp_logo(&s->logo, s->ulogo_name)) {
 			printf("failed to display uboot logo\n");
-		else
+		} else {
 			ret = display_logo(s);
-
+			if (ret == -EAGAIN)
+				ms = s;
+		}
 		/* Load kernel bmp in rockchip_display_fixup() later */
+	}
+
+	/*
+	 * For rk3566, the mirror win must be enabled after the related
+	 * source win. If error code is EAGAIN, the mirror win may be
+	 * first enabled unexpectedly, and we will move the enabling process
+	 * as follows.
+	 */
+	if (ms) {
+		while (count < 5) {
+			ret = display_logo(ms);
+			if (ret != -EAGAIN)
+				break;
+			mdelay(10);
+			count++;
+		}
 	}
 
 	return ret;
@@ -2139,27 +2161,27 @@ void rockchip_display_fixup(void *blob)
 			FDT_SET_U32("bcsh,hue", s->conn_state.disp_info->bcsh_info.hue);
 
 			if (!strncasecmp(cacm_header, "CACM", 4)) {
-				FDT_SET_U32("post_csc,hue",
+				FDT_SET_U32("post-csc,hue",
 					    s->conn_state.disp_info->csc_info.hue);
-				FDT_SET_U32("post_csc,saturation",
+				FDT_SET_U32("post-csc,saturation",
 					    s->conn_state.disp_info->csc_info.saturation);
-				FDT_SET_U32("post_csc,contrast",
+				FDT_SET_U32("post-csc,contrast",
 					    s->conn_state.disp_info->csc_info.contrast);
-				FDT_SET_U32("post_csc,brightness",
+				FDT_SET_U32("post-csc,brightness",
 					    s->conn_state.disp_info->csc_info.brightness);
-				FDT_SET_U32("post_csc,r_gain",
+				FDT_SET_U32("post-csc,r-gain",
 					    s->conn_state.disp_info->csc_info.r_gain);
-				FDT_SET_U32("post_csc,g_gain",
+				FDT_SET_U32("post-csc,g-gain",
 					    s->conn_state.disp_info->csc_info.g_gain);
-				FDT_SET_U32("post_csc,b_gain",
+				FDT_SET_U32("post-csc,b-gain",
 					    s->conn_state.disp_info->csc_info.b_gain);
-				FDT_SET_U32("post_csc,r_offset",
+				FDT_SET_U32("post-csc,r-offset",
 					    s->conn_state.disp_info->csc_info.r_offset);
-				FDT_SET_U32("post_csc,g_offset",
+				FDT_SET_U32("post-csc,g-offset",
 					    s->conn_state.disp_info->csc_info.g_offset);
-				FDT_SET_U32("post_csc,b_offset",
+				FDT_SET_U32("post-csc,b-offset",
 					    s->conn_state.disp_info->csc_info.b_offset);
-				FDT_SET_U32("post_csc,csc_enable",
+				FDT_SET_U32("post-csc,enable",
 					    s->conn_state.disp_info->csc_info.csc_enable);
 			}
 		}
