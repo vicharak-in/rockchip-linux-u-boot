@@ -1,5 +1,13 @@
-u-boot-rk3399-vaaman (22072023) UNRELEASED; urgency=medium
+u-boot-rk3399-vaaman (1.1.0) stable; urgency=medium
 
+  [ vicharak ]
+  * Update u-boot source
+
+ -- vicharak <vicharak@galactos>  Thu, 21 Sep 2023 12:11:44 +0530
+
+u-boot-rk3399-vaaman (1.0.0) UNRELEASED; urgency=medium
+
+  [ rk3399_vaaman ]
   * Initial release.
 
  -- rk3399_vaaman <vicharak@galactos-bubuntu>  Sat, 22 Jul 2023 11:06:55 +0530
