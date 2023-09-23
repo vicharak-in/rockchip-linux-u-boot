@@ -20,4 +20,9 @@
 #define CONFIG_SYS_MMC_ENV_DEV 1
 #define CONFIG_SYS_MMC_MAX_BLK_COUNT	32768
 
+/* Enable efuse support for cpuid, serial and macaddr */
+#define CONFIG_MISC_INIT_R
+#define CONFIG_SERIAL_TAG
+#define CONFIG_ENV_OVERWRITE
+
 #endif /* __RK3399_VAAMAN_H */
