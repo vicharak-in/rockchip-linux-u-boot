@@ -13,6 +13,12 @@
 		"stdout=serial,vidconsole\0" \
 		"stderr=serial,vidconsole\0"
 
+/* Fix build error with SPL build */
+#ifndef CONFIG_SPL_BUILD
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND
+#endif
+
 /* Enable eMMC SDMA support */
 #define CONFIG_MMC_SDHCI_SDMA
 
