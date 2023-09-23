@@ -25,4 +25,9 @@
 #define CONFIG_SERIAL_TAG
 #define CONFIG_ENV_OVERWRITE
 
+/* Enable default BMP display */
+#define CONFIG_BMP_16BPP
+#define CONFIG_BMP_24BPP
+#define CONFIG_BMP_32BPP
+
 #endif /* __RK3399_VAAMAN_H */
