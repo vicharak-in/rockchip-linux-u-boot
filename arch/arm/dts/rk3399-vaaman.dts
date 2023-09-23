@@ -270,6 +270,12 @@
 };
 // End of CPU Supply }}}
 
+// Crypto Rockchip: {{{
+&crypto {
+	status = "okay";
+};
+// }}} End of Crypto Rockchip
+
 // Devfreq: {{{
 &dfi {
 	status = "okay";
