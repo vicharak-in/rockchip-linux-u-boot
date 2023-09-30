@@ -5,6 +5,7 @@
  */
 
 #include <common.h>
+#include <adc.h>
 #include <dm.h>
 #include <misc.h>
 #include <ram.h>
@@ -72,6 +73,22 @@ int rk_board_init(void)
 
 out:
 	return 0;
+}
+
+int rockchip_dnl_key_pressed(void)
+{
+	unsigned int id_val;
+
+	if (adc_channel_single_shot("saradc", 0, &id_val)) {
+		printf("%s read recovery key failed\n", __func__);
+		return false;
+	}
+
+	// 180~190 is the range of recovery key
+	if (id_val > 190)
+		return false;
+
+	return true;
 }
 
 static void setup_macaddr(void)
