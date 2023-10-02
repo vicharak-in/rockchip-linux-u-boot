@@ -1,3 +1,10 @@
+u-boot-rk3399-vaaman (1.1.1) stable; urgency=medium
+
+  [ vicharak ]
+  * Add support for recovery key to maskrom mode
+
+ -- vicharak <vicharak@galactos>  Mon, 02 Oct 2023 12:45:03 +0530
+
 u-boot-rk3399-vaaman (1.1.0) stable; urgency=medium
 
   [ vicharak ]
