@@ -5,6 +5,8 @@
  */
 
 #include <common.h>
+#include <version.h>
+#include <abuf.h>
 #include <amp.h>
 #include <android_ab.h>
 #include <android_bootloader.h>
@@ -26,6 +28,7 @@
 #include <of_live.h>
 #include <mtd_blk.h>
 #include <ram.h>
+#include <rng.h>
 #include <rockchip_debugger.h>
 #include <syscon.h>
 #include <sysmem.h>
@@ -894,7 +897,7 @@ int bootm_board_start(void)
 	 * we switch to uart debug function in order to print it after loading
 	 * images.
 	 */
-#if defined(CONFIG_CONSOLE_RECORD)
+#if 0
 	if (!strcmp("mmc", env_get("devtype")) &&
 	    !strcmp("1", env_get("devnum"))) {
 		printf("IOMUX: sdmmc => uart debug");
@@ -1115,47 +1118,140 @@ void board_quiesce_devices(void *images)
 #endif
 }
 
-char *board_fdt_chosen_bootargs(void *fdt)
+/*
+ * Use hardware rng to seed Linux random
+ *
+ * 'Android_14 + GKI' requires this information.
+ */
+int board_rng_seed(struct abuf *buf)
 {
-	/* bootargs_ext is used when dtbo is applied. */
-	const char *arr_bootargs[] = { "bootargs", "bootargs_ext" };
-	const char *bootargs;
-	int nodeoffset;
-	int i, dump;
-	char *msg = "kernel";
+	struct udevice *dev;
+	size_t len = 32;
+	u64 *data;
 
-	/* debug */
-	hotkey_run(HK_INITCALL);
-	dump = is_hotkey(HK_CMDLINE);
-	if (dump)
-		printf("## bootargs(u-boot): %s\n\n", env_get("bootargs"));
-
-	/* find or create "/chosen" node. */
-	nodeoffset = fdt_find_or_add_subnode(fdt, 0, "chosen");
-	if (nodeoffset < 0)
-		return NULL;
-
-	for (i = 0; i < ARRAY_SIZE(arr_bootargs); i++) {
-		bootargs = fdt_getprop(fdt, nodeoffset, arr_bootargs[i], NULL);
-		if (!bootargs)
-			continue;
-		if (dump)
-			printf("## bootargs(%s-%s): %s\n\n",
-			       msg, arr_bootargs[i], bootargs);
-		/*
-		 * Append kernel bootargs
-		 * If use AB system, delete default "root=" which route
-		 * to rootfs. Then the ab bootctl will choose the
-		 * high priority system to boot and add its UUID
-		 * to cmdline. The format is "roo=PARTUUID=xxxx...".
-		 */
-#ifdef CONFIG_ANDROID_AB
-		env_update_filter("bootargs", bootargs, "root=");
-#else
-		env_update("bootargs", bootargs);
-#endif
+	data = malloc(len);
+	if (!data) {
+	        printf("Out of memory\n");
+	        return -ENOMEM;
 	}
 
+	if (uclass_get_device(UCLASS_RNG, 0, &dev) || !dev) {
+	        printf("No RNG device\n");
+	        return -ENODEV;
+	}
+
+	if (dm_rng_read(dev, data, len)) {
+	        printf("Reading RNG failed\n");
+	        return -EIO;
+	}
+
+	abuf_init_set(buf, data, len);
+
+	return 0;
+}
+
+/*
+ * Pass fwver when any available.
+ */
+static void bootargs_add_fwver(bool verbose)
+{
+#ifdef CONFIG_ROCKCHIP_PRELOADER_ATAGS
+	struct tag *t;
+	char *list1 = NULL;
+	char *list2 = NULL;
+	char *fwver = NULL;
+	char *p = PLAIN_VERSION;
+	int i, end;
+
+	t = atags_get_tag(ATAG_FWVER);
+	if (t) {
+		list1 = calloc(1, sizeof(struct tag_fwver));
+		if (!list1)
+			return;
+		for (i = 0; i < FW_MAX; i++) {
+			if (t->u.fwver.ver[i][0] != '\0') {
+				strcat(list1, t->u.fwver.ver[i]);
+				strcat(list1, ",");
+			}
+		}
+	}
+
+	list2 = calloc(1, FWVER_LEN);
+	if (!list2)
+		goto out;
+	strcat(list2, "uboot-");
+	/* optional */
+#ifdef BUILD_TAG
+	strcat(list2, BUILD_TAG);
+	strcat(list2, "-");
+#endif
+	/* optional */
+	if (strcmp(PLAIN_VERSION, "2017.09")) {
+		strncat(list2, p + strlen("2017.09-g"), 10);
+		strcat(list2, "-");
+	}
+	strcat(list2, U_BOOT_DMI_DATE);
+
+	/* merge ! */
+	if (list1 || list2) {
+		fwver = calloc(1, sizeof(struct tag_fwver));
+		if (!fwver)
+			goto out;
+
+		strcat(fwver, "androidboot.fwver=");
+		if (list1)
+			strcat(fwver, list1);
+		if (list2) {
+			strcat(fwver, list2);
+		} else {
+			end = strlen(fwver) - 1;
+			fwver[end] = '\0'; /* omit last ',' */
+		}
+		if (verbose)
+			printf("## fwver: %s\n\n", fwver);
+		env_update("bootargs", fwver);
+		env_set("fwver", fwver + strlen("androidboot."));
+	}
+out:
+	if (list1)
+		free(list1);
+	if (list2)
+		free(list2);
+	if (fwver)
+		free(fwver);
+#endif
+}
+
+static void bootargs_add_android(bool verbose)
+{
+#ifdef CONFIG_ANDROID_AB
+	ab_update_root_partition();
+#endif
+
+	/* Android header v4+ need this handle */
+#ifdef CONFIG_ANDROID_BOOT_IMAGE
+	struct andr_img_hdr *hdr;
+	char *fwver;
+
+	hdr = (void *)env_get_ulong("android_addr_r", 16, 0);
+	if (hdr && !android_image_check_header(hdr) && hdr->header_version >= 4) {
+		if (env_update_extract_subset("bootargs", "andr_bootargs", "androidboot."))
+			printf("extract androidboot.xxx error\n");
+		if (verbose)
+			printf("## bootargs(android): %s\n\n", env_get("andr_bootargs"));
+
+		/* for kernel cmdline can be read */
+		fwver = env_get("fwver");
+		if (fwver) {
+			env_update("bootargs", fwver);
+			env_set("fwver", NULL);
+		}
+	}
+#endif
+}
+
+static void bootargs_add_partition(bool verbose)
+{
 #if defined(CONFIG_ENVF) || defined(CONFIG_ENV_PARTITION)
 	char *part_type[] = { "mtdparts", "blkdevparts" };
 	char *part_list;
@@ -1177,14 +1273,14 @@ char *board_fdt_chosen_bootargs(void *fdt)
 			part_list = env;
 		}
 		env_update("bootargs", part_list);
-		if (dump)
+		if (verbose)
 			printf("## parts: %s\n\n", part_list);
 	}
 
 	env = env_get("sys_bootargs");
 	if (env) {
 		env_update("bootargs", env);
-		if (dump)
+		if (verbose)
 			printf("## sys_bootargs: %s\n\n", env);
 	}
 #endif
@@ -1199,10 +1295,58 @@ char *board_fdt_chosen_bootargs(void *fdt)
 		}
 	}
 #endif
+}
 
+static void bootargs_add_dtb_dtbo(void *fdt, bool verbose)
+{
+	/* bootargs_ext is used when dtbo is applied. */
+	const char *arr_bootargs[] = { "bootargs", "bootargs_ext" };
+	const char *bootargs;
+	char *msg = "kernel";
+	int i, noffset;
+
+	/* find or create "/chosen" node. */
+	noffset = fdt_find_or_add_subnode(fdt, 0, "chosen");
+	if (noffset < 0)
+		return;
+
+	for (i = 0; i < ARRAY_SIZE(arr_bootargs); i++) {
+		bootargs = fdt_getprop(fdt, noffset, arr_bootargs[i], NULL);
+		if (!bootargs)
+			continue;
+		if (verbose)
+			printf("## bootargs(%s-%s): %s\n\n",
+			       msg, arr_bootargs[i], bootargs);
+		/*
+		 * Append kernel bootargs
+		 * If use AB system, delete default "root=" which route
+		 * to rootfs. Then the ab bootctl will choose the
+		 * high priority system to boot and add its UUID
+		 * to cmdline. The format is "roo=PARTUUID=xxxx...".
+		 */
 #ifdef CONFIG_ANDROID_AB
-	ab_update_root_partition();
+		env_update_filter("bootargs", bootargs, "root=");
+#else
+		env_update("bootargs", bootargs);
 #endif
+	}
+}
+
+char *board_fdt_chosen_bootargs(void *fdt)
+{
+	int verbose = is_hotkey(HK_CMDLINE);
+	const char *bootargs;
+
+	/* debug */
+	hotkey_run(HK_INITCALL);
+	if (verbose)
+		printf("## bootargs(u-boot): %s\n\n", env_get("bootargs"));
+
+	bootargs_add_dtb_dtbo(fdt, verbose);
+	bootargs_add_partition(verbose);
+	bootargs_add_android(verbose);
+	bootargs_add_fwver(verbose);
+
 	/*
 	 * Initrd fixup: remove unused "initrd=0x...,0x...",
 	 * this for compatible with legacy parameter.txt
@@ -1225,20 +1369,8 @@ char *board_fdt_chosen_bootargs(void *fdt)
 	if (gd->flags & GD_FLG_DISABLE_CONSOLE)
 		env_delete("bootargs", "earlycon=", 0);
 
-	/* Android header v4+ need this handle */
-#ifdef CONFIG_ANDROID_BOOT_IMAGE
-	struct andr_img_hdr *hdr;
-
-	hdr = (void *)env_get_ulong("android_addr_r", 16, 0);
-	if (hdr && !android_image_check_header(hdr) && hdr->header_version >= 4) {
-		if (env_update_extract_subset("bootargs", "andr_bootargs", "androidboot."))
-			printf("extract androidboot.xxx error\n");
-		if (dump)
-			printf("## bootargs(android): %s\n\n", env_get("andr_bootargs"));
-	}
-#endif
 	bootargs = env_get("bootargs");
-	if (dump)
+	if (verbose)
 		printf("## bootargs(merged): %s\n\n", bootargs);
 
 	return (char *)bootargs;
