@@ -1,3 +1,394 @@
+u-boot-rk3399-vaaman (1.1.2) focal; urgency=medium
+
+  [ shengfei Xu ]
+  * rk3562: bl31: update version to v1.17
+
+  [ Hisping Lin ]
+  * rv1126: tee: update version to v2.09
+
+  [ Wesley Yao ]
+  * rv1106: ddr: Update DDR bin to v1.12 20230531
+
+  [ YouMin Chen ]
+  * tool: ddrbin_tool: update to v1.15 20230530
+
+  [ Chen Fen ]
+  * rk3399: miniloader usbplug: update version to 1.30.
+
+  [ Liang Chen ]
+  * rk3568: bl31: update version to v1.43
+
+  [ Zhihuan He ]
+  * rk3528: ddr: update ddrbin to v1.06
+
+  [ Tang Yun ping ]
+  * rk3562: ddr: update ultra ddrbin to v1.05
+
+  [ XiaoDong Huang ]
+  * rv1106: tee with ta: add initial version v1.00
+
+  [ Hisping Lin ]
+  * rk3568: bl32: update version to v2.10
+
+  [ Weiwen Chen ]
+  * rv1106: mcu: update sc4336/sc3336/sc3338/sc230ai/dual_sc3338 hpmcu tb bin to v1.66
+
+  [ Joseph Chen ]
+  * scripts: checkpatch: Add month check
+
+  [ Tang Yun ping ]
+  * rk3568: ddr: update ddrbin to v1.17
+  * rk3566: ddr: update ddrbin to v1.17
+
+  [ XiaoDong Huang ]
+  * rk3568: bl31 l3_part_ecc: add initial version
+
+  [ liuyi ]
+  * tools: programmer_image_tool: Update to v1.25
+
+  [ Ziyuan Xu ]
+  * rv1106: mcu: update hpmcu tb bin to v1.67
+
+  [ Wang Xiaobin ]
+  * rv1106: mcu: update gc2093 hpmcu tb bin to v1.65
+
+  [ Zain Wang ]
+  * tools: rk_sign_tool: Update to v1.38
+
+  [ Finley Xiao ]
+  * rk3588: bl31: update version to v1.39
+
+  [ Wang Xiaobin ]
+  * rv1106: mcu: update gc2093 hpmcu tb bin to v1.66
+
+  [ YouMin Chen ]
+  * rk3588: ddr: update ddrbin to v1.12
+
+  [ Wesley Yao ]
+  * rv1106: ddr: Update DDR bin to v1.13 20230710
+
+  [ Zain Wang ]
+  * tools: rk_sign_tool: Update to v1.39
+
+  [ Finley Xiao ]
+  * rk3588: bl31: update version to v1.40
+
+  [ Liang Chen ]
+  * rk3528: bl31: update version to v1.15
+
+  [ Tang Yun ping ]
+  * rk3568: ddr: update ddrbin to v1.18
+  * rk3566: ddr: update ddrbin to v1.18
+
+  [ Ziyuan Xu ]
+  * rv1106: mcu: update hpmcu tb bin to v1.68
+
+  [ Liang Chen ]
+  * rk3528: bl31: update version to v1.16
+
+  [ Xuhui Lin ]
+  * rv1106: RKTRUST: Modify [LOAD] to [MCU] in RV1106TOS_TB.ini
+
+  [ Weiwen Chen ]
+  * rv1106: set rv1106_hpmcu_wrap to MCU1
+
+  [ Kever Yang ]
+  * Add license file for the repository
+
+  [ cww ]
+  * rv1106: mcu: update hpmcu tb bin to v1.69
+
+  [ Hisping Lin ]
+  * rv1106: tee: update version to v1.10
+
+  [ Zhihuan He ]
+  * tool: ddrbin_tool: update to v1.17 20230725
+
+  [ Jon Lin ]
+  * rk3326: loader: Update to v1.37
+  * px30: loader: Update to v1.37
+
+  [ shengfei Xu ]
+  * rk3568: bl31: add rk3568_bl31_cpu3_v1.01.elf
+
+  [ XiaoDong Huang ]
+  * rk3588: bl31: update version to v1.41
+
+  [ YouMin Chen ]
+  * rk3588: ddr: update ddrbin to v1.13
+
+  [ Chuanhu Sun ]
+  * rv1106: rv1106_hpmcu_wrap: update version to v1.60
+
+  [ Hisping Lin ]
+  * rk322x: tee with ta: update optee version to v2.12
+  * rk3128x: tee with ta: update optee version to v2.12
+  * rk3288: tee with ta: update optee version to v2.03
+  * rk312x: tee with ta: update optee version to v2.04
+  * rk3399: bl32: update version to v2.11
+  * rk3399pro: bl32: update version to v2.11
+  * rk3228h/rk3328: bl32: update version to v2.02
+  * rk3368: bl32: update version to v2.02
+
+  [ Weiwen Chen ]
+  * rv1106: mcu: update hpmcu tb bin to v1.70
+
+  [ Fenrir Lin ]
+  * rv1106: add wakeup relevant files
+
+  [ shengfei Xu ]
+  * rk3562: bl31: update version to v1.18
+
+  [ Zhihuan He ]
+  * rk3528: ddr: update ddrbin to v1.07
+
+  [ shengfei Xu ]
+  * rk3562: bl31: update version to v1.19
+
+  [ Damon Ding ]
+  * configs: add rk3308-display.config
+
+  [ Guochun Huang ]
+  * video/drm: dsi2: havle dsc pps pic_width in dual channel dsi
+
+  [ Lokesh Vutla ]
+  * UPSTREAM: power domain: Add support for multiple powerdomains per device
+
+  [ Peng Fan ]
+  * UPSTREAM: power: domain: add dev_power_domain_on
+
+  [ Lokesh Vutla ]
+  * UPSTREAM: power: domain: Introduce dev_power_domain_off
+
+  [ Simon Glass ]
+  * UPSTREAM: power-domain: Rename free() to rfree()
+
+  [ Anatolij Gustschin ]
+  * UPSTREAM: power-domain: fix hang in endless loop on i.MX8
+
+  [ Marek Vasut ]
+  * UPSTREAM: power-domain: Return 0 if ops unimplemented and remove empty functions
+  * UPSTREAM: power_domain: Add power_domain_get_by_name()
+
+  [ Sean Anderson ]
+  * UPSTREAM: power-domain: Fix use of uninitialized value in dev_power_domain_ctrl
+
+  [ Jonas Karlman ]
+  * UPSTREAM: rockchip: clk: clk_rk3568: Add CLK_PCIEPHY2_REF support
+  * UPSTREAM: clk: rockchip: rk3568: Fix mask for clk_cpll_div_25m_div
+  * UPSTREAM: clk: rockchip: rk3568: Include UART clocks in SPL
+  * UPSTREAM: clk: rockchip: rk3568: Add dummy support for GMAC speed clocks
+  * UPSTREAM: power: regulator: rk8xx: Add 500us delay after LDO regulator is enabled
+
+  [ Hisping Lin ]
+  * rk3326: bl32: update version to v2.15
+  * px30: bl32: update version to v2.15
+  * rk3358: bl32: update version to v2.06
+  * rk3308: bl32: update version to v2.06
+  * rk1808: bl32: update version to v2.03
+  * rknpu_lion: bl32: update version to v2.02
+  * rk3568: bl32: update version to v2.11
+  * rk3588: bl32: update version to v1.14
+  * rk3562: bl32: update version to v1.02
+  * rk3528: bl32: update version to v1.03
+  * rv1126: tee: update version to v2.10
+
+  [ Jon Lin ]
+  * mtd: nand: rockchip: Modify the judgment of the last page
+
+  [ Wang Xiaobin ]
+  * rv1106: mcu: update gc2093 hpmcu tb bin to v1.70
+
+  [ Jiahang Zheng ]
+  * rockchip: rk3562: change mcu peripherals start address
+
+  [ Weiwen Chen ]
+  * rv1106: add rv1106-spi-nor-tb-nofastae_defconfig
+  * rv1106: add rv1106-emmc-tb-nofastae_defconfig
+
+  [ Lin Jianhua ]
+  * RKBOOT: add RK3308MINIALL_SPI_NAND_UART4.ini
+
+  [ Joseph Chen ]
+  * spl: fit: Not allow append fdt failed
+
+  [ Damon Ding ]
+  * video/drm: display: fix the dclk calculation of mcu interface
+  * video/drm: vop: add debug logs about drm_display_mode
+
+  [ Algea Cao ]
+  * drm/rockchip: dw-hdmi: Filter hdmi 2.1 resolution
+
+  [ Hisping Lin ]
+  * lib: optee_clientApi: support check ta encryption key is written
+  * f_rockusb: support check ta encryption key is written
+
+  [ Yifeng Zhao ]
+  * vendor storage: Support for expanding allocation size during re-write
+
+  [ XiaoDong Huang ]
+  * rk3588: bl31: update version to v1.42
+
+  [ Guochun Huang ]
+  * video/drm: phy: dcphy: make Tskewcal maximum is 100 usec at initial calibration
+
+  [ Steven Liu ]
+  * rockchip: rk3562: fix mcu cache peripheral start addr
+
+  [ Simon Glass ]
+  * UPSTREAM: lib: Add memdup()
+  * UPSTREAM: Add support for an owned buffer
+
+  [ Rasmus Villemoes ]
+  * UPSTREAM: fdt_support: add optional board_rng_seed() hook
+
+  [ Joseph Chen ]
+  * rockchip: board: Implement board_rng_seed()
+
+  [ Hisping Lin ]
+  * lib: optee_clientApi: support pack TA to image
+  * lib: optee_clientApi: support load user ta
+  * lib: optee_clientApi: add user ta test demo
+
+  [ Chen Shunqing ]
+  * edid: provide drm_add_hdmi_modes func
+  * video/drm: dw-hdmi-qp: add bridge support
+
+  [ Lin Jianhua ]
+  * configs: rk3308: add config for intelligent home appliances
+
+  [ Joseph Chen ]
+  * rockchip: atags: Add fwver tag support
+  * rockchip: board: Clean up board_fdt_chosen_bootargs()
+  * rockchip: board: Add "fwver" into bootargs
+  * spl/uboot: Add build tag verbose
+  * Makefile: Add FWVER and SPL_FWVER args support for make
+  * make.sh: Add "--spl-fwver" and "--fwver" support
+
+  [ Tang Yun ping ]
+  * rockchip: atags: TPL no need func atags_set_shared_fwver
+
+  [ Xuhui Lin ]
+  * misc: rockchip decompress: Enable IRQ when storage is spi-nand in SPL
+
+  [ Weiwen Chen ]
+  * rockchip: dts: rv1106-evb: enable hw_decompress default
+
+  [ Joseph Chen ]
+  * scripts: checkpatch: Add fw version check
+
+  [ Weiwen Chen ]
+  * rv1106: add rv1106-spi-nand-tb-nofastae_defconfig
+
+  [ Xuhui Lin ]
+  * rk3562: spl: update version to v1.04
+
+  [ Weiwen Chen ]
+  * RKBOOT: RV1106 add RV1106MINIALL_SPI_NAND_TB_NOMCU.ini
+
+  [ Joseph Chen ]
+  * rockchip: fit_nodes: Allow only one atf node
+  * rockchip: atags: Fix last valid tag be damaged when override tag
+  * rockchip: spl: Fix fwver prefix
+
+  [ Xuhui Lin ]
+  * rk3528: spl: update version to v1.05
+  * rk3588: spl: update version to v1.13
+  * rk3568: spl: update version to v1.13
+  * rk3566: spl: update version to v1.13
+  * rk3562: spl: update version to v1.05
+
+  [ Liang Chen ]
+  * rk3568: bl31: update version to v1.44
+
+  [ Huibin Hong ]
+  * elf: update elf.h from upstream
+
+  [ Xuhui Lin ]
+  * common: spl: fit: Add spl_fit_tb.S dedicated to rv1106
+  * common: spl: Support ab with more partition tables
+
+  [ Chaoyi Chen ]
+  * video/drm: of: Add drm_of_lvds_get_dual_link_pixel_order
+  * video/drm: lvds: add support for dual lvds connector
+  * video/drm: lvds: add support for secondary lvds probe
+  * video/drm: vop2: fix lvds data swap behavior
+
+  [ YouMin Chen ]
+  * tool: ddrbin_tool: update to v1.18 20230919
+
+  [ Tang Yun ping ]
+  * rk3568: ddr: update ddrbin to v1.19
+
+  [ XiaoDong Huang ]
+  * rk3588: bl31: update version to v1.43
+
+  [ Hisping Lin ]
+  * rk3588: bl32: update version to v1.15
+
+  [ Tang Yun ping ]
+  * rk3588: ddr: update ddrbin to v1.14
+
+  [ Xuhui Lin ]
+  * common: spl: Kconfig: Add MTD_WRITE/MMC_WRITE support for SPL_AB
+  * configs: rv1106: Enable SPL_AB by default
+
+  [ Jon Lin ]
+  * mtd: nand: Skip the first block during low format BBT
+  * rockusb: f_rockusb: Support switch storage
+
+  [ Ziyuan Xu ]
+  * dts: rockchip: rv1106: add clock and reset properties for wdt
+  * clk: rockchip: rv1106: add tclk_wdt
+
+  [ Joseph Chen ]
+  * power: pmic: rk806: Don't print irq request fail message when busy
+
+  [ Jon Lin ]
+  * rockchip: pcie-ep-boot: Set PCIe EP info if the link is already linked
+  * rockchip: pcie-ep-boot: Reset when phy locked failed
+
+  [ Wang Xiaobin ]
+  * rv1106: mcu: update gc2093 hpmcu tb bin to v1.71
+
+  [ Xuhui Lin ]
+  * rockchip: spl: Add hotkey support & Fix brom_download()
+  * rockchip: spl_tb: Force to enter uboot when ctrl+C is pressed
+
+  [ Joseph Chen ]
+  * common: console: Call debug uart print after console record
+  * rockchip: board: Don't print console record buffer
+  * configs: rk3328: Sync with make savedefconfig
+  * scripts: checkpatch: Fix version match pattern
+
+  [ Xuhui Lin ]
+  * rv1106: spl: update version to v1.02
+  * rv1126: spl: update version to v1.10
+
+  [ David Wu ]
+  * configs: Enable IO Domain configs for RK322x, RK3308 and RK3328
+
+  [ XiaoDong Huang ]
+  * rv1126: tee: update version to v2.11
+
+  [ Wu Liangqing ]
+  * configs: rk3588: supprot RNG SEED
+  * configs: rk3568: supprot RNG SEED
+  * configs: rk3562: supprot RNG SEED
+
+  [ Hisping Lin ]
+  * lib: optee_clientApi: support write oem hdcp key
+  * lib: optee_clientApi: support check oem hdcp key is written
+  * lib: optee_clientApi: support set oem hdcp key mask
+
+  [ Guochun Huang ]
+  * video/drm: dsi2: recalculate vfrefresh after modify mode
+
+  [ UtsavBalar1231 ]
+  * configs: axon: Sync with upstream changes
+
+ -- UtsavBalar1231 <utsavbalar1231@gmail.com>  Tue, 10 Oct 2023 11:29:06 +0530
+
 u-boot-rk3399-vaaman (1.1.1) stable; urgency=medium
 
   [ vicharak ]
