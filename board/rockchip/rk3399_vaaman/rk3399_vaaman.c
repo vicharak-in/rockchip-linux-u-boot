@@ -84,8 +84,10 @@ int rockchip_dnl_key_pressed(void)
 		return false;
 	}
 
-	// 180~190 is the range of recovery key
-	if (id_val > 190)
+	printf("%s recovery key: %d\n", __func__, id_val);
+
+	// 150~180 is the range of recovery key
+	if (id_val > 175)
 		return false;
 
 	return true;
