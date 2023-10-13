@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Standards-Version: 4.6.0
 Maintainer: UtsavBalar1231 <utsavbalar1231@gmail.com>
-Build-Depends: debhelper-compat (= 12), parted, gcc, make, bc, bison, python2, flex, device-tree-compiler, udev
+Build-Depends: debhelper-compat (= 12), parted, bc, bison, flex, device-tree-compiler, udev
 Vcs-Git: https://github.com/vicharak/u-boot-vicharak.git
 
 Package: u-boot-rk3399-vaaman
