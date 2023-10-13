@@ -785,6 +785,7 @@ function pack_images()
 			pack_uboot_image
 			pack_trust_image
 			pack_loader_image
+			pack_idblock
 		fi
 	fi
 }
