@@ -16,8 +16,17 @@ RKBIN_TOOLS=rkbin/tools
 else
 RKBIN_TOOLS=../rkbin/tools
 fi
+
+CROSS_COMPILE_ARM32=$(command -v arm-linux-gnueabi-gcc)
+CROSS_COMPILE_ARM64=$(command -v aarch64-linux-gnu-gcc)
+
+if [ -z "${CROSS_COMPILE_ARM32}" ]; then
 CROSS_COMPILE_ARM32=../prebuilts/gcc/linux-x86/arm/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
+fi
+
+if [ -z "${CROSS_COMPILE_ARM64}" ]; then
 CROSS_COMPILE_ARM64=../prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+fi
 ########################################### User not touch #############################################
 # Declare global INI file searching index name for every chip, update in select_chip_info()
 RKCHIP=
