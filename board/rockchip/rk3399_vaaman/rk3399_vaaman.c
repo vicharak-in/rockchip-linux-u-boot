@@ -79,18 +79,17 @@ int rockchip_dnl_key_pressed(void)
 {
 	unsigned int id_val;
 
-	if (adc_channel_single_shot("saradc", 0, &id_val)) {
+	if (adc_channel_single_shot("saradc", 1, &id_val)) {
 		printf("%s read recovery key failed\n", __func__);
 		return false;
 	}
 
 	printf("%s recovery key: %d\n", __func__, id_val);
 
-	// 150~180 is the range of recovery key
-	if (id_val > 175)
-		return false;
+	if (id_val >= 0 && id_val < 20)
+		return true;
 
-	return true;
+	return false;
 }
 
 static void setup_macaddr(void)
