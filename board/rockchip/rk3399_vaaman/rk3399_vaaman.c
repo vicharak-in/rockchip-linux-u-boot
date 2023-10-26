@@ -18,11 +18,12 @@
 #include <usb.h>
 #include <dwc3-uboot.h>
 #include <spl.h>
+#include <led.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#define RK3399_CPUID_OFF  0x7
-#define RK3399_CPUID_LEN  0x10
+#define RK3399_CPUID_OFF 0x7
+#define RK3399_CPUID_LEN 0x10
 
 int rk_board_init(void)
 {
@@ -75,6 +76,47 @@ out:
 	return 0;
 }
 
+#ifdef CONFIG_LED
+static int set_leds(int status)
+{
+	struct udevice *status_led, *power_led;
+	int ret;
+
+	ret = led_get_by_label("status", &status_led);
+	if (ret) {
+		printf("LEDS: Can't find status led\n");
+		return ret;
+	}
+
+	ret = led_get_by_label("power", &power_led);
+	if (ret) {
+		printf("LEDS: Can't find power led\n");
+		return ret;
+	}
+
+	ret = led_set_state(status_led, status);
+	if (ret) {
+		printf("LEDS: set status led failed\n");
+		return ret;
+	}
+
+	ret = led_set_state(power_led, status);
+	if (ret) {
+		printf("LEDS: set power led failed\n");
+		return ret;
+	}
+
+	return 0;
+}
+#endif
+
+void do_board_download(void)
+{
+#ifdef CONFIG_LED
+	set_leds(0);
+#endif
+}
+
 int rockchip_dnl_key_pressed(void)
 {
 	unsigned int id_val;
@@ -120,8 +162,8 @@ static void setup_macaddr(void)
 	memcpy(mac_addr, hash, 6);
 
 	/* Make this a valid MAC address and set it */
-	mac_addr[0] &= 0xfe;  /* clear multicast bit */
-	mac_addr[0] |= 0x02;  /* set local assignment bit (IEEE802) */
+	mac_addr[0] &= 0xfe; /* clear multicast bit */
+	mac_addr[0] |= 0x02; /* set local assignment bit (IEEE802) */
 	eth_env_set_enetaddr("ethaddr", mac_addr);
 #endif
 
@@ -185,6 +227,11 @@ int misc_init_r(void)
 {
 	setup_serial();
 	setup_macaddr();
+
+#ifdef CONFIG_LED
+	// Init leds
+	set_leds(1);
+#endif
 
 	return 0;
 }
