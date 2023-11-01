@@ -41,25 +41,6 @@ int rk_board_init(void)
 		goto out;
 	}
 
-	/* Enable pwm0 for panel backlight */
-	ret = pinctrl_request_noflags(pinctrl, PERIPH_ID_PWM0);
-	if (ret) {
-		debug("%s PWM0 pinctrl init fail! (ret=%d)\n", __func__, ret);
-		goto out;
-	}
-
-	ret = pinctrl_request_noflags(pinctrl, PERIPH_ID_PWM2);
-	if (ret) {
-		debug("%s PWM2 pinctrl init fail!\n", __func__);
-		goto out;
-	}
-
-	ret = pinctrl_request_noflags(pinctrl, PERIPH_ID_PWM3);
-	if (ret) {
-		debug("%s PWM3 pinctrl init fail!\n", __func__);
-		goto out;
-	}
-
 	ret = regulator_get_by_platname("vcc5v0_host", &regulator);
 	if (ret) {
 		debug("%s vcc5v0_host init fail! ret %d\n", __func__, ret);
