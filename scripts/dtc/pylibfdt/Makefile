@@ -24,7 +24,7 @@ quiet_cmd_pymod = PYMOD   $@
 		CPPFLAGS="$(HOSTCFLAGS) -I$(LIBFDT_srcdir)" OBJDIR=$(obj) \
 		SOURCES="$(PYLIBFDT_srcs)" \
 		SWIG_OPTS="-I$(LIBFDT_srcdir) -I$(LIBFDT_srcdir)/.." \
-		$(PYTHON3) $< --quiet build_ext --inplace
+		$(PYTHON) $< --quiet build_ext --inplace
 
 rebuild: $(src)/setup.py $(PYLIBFDT_srcs)
 	@# Remove the library since otherwise Python doesn't seem to regenerate
