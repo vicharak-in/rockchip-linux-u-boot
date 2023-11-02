@@ -168,6 +168,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
 	rk3399-rock-pi-4c.dtb \
 	rk3399-rock960.dtb \
 	rk3399-rockpro64.dtb \
+	rk3399-vaaman.dtb \
 	rk3399pro-rock-pi-n10.dtb
 
 dtb-$(CONFIG_ROCKCHIP_RK3568) += \
