@@ -20,6 +20,8 @@
 #include <asm/arch-rockchip/hardware.h>
 #include <linux/bitops.h>
 #include <power/regulator.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/rockchip.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -156,6 +158,16 @@ void board_debug_uart_init(void)
 		spl_gpio_set_pull(&pmugrf->gpio0_p, GPIO(BANK_B, 4),
 				  GPIO_PULL_NORMAL);
 	}
+
+#ifdef CONFIG_TARGET_PINEBOOK_PRO_RK3399
+	{
+		// set GPIO0_A2/B3 to GPIO_ACTIVE_HIGH
+		// set GPIO0_A2/B3 to OUTPUT
+		int mask = (1UL << RK_PA2) | (1UL << RK_PB3);
+		setbits_le32(&gpio->swport_dr, mask);
+		setbits_le32(&gpio->swport_ddr, mask);
+	}
+#endif
 
 	/* Enable early UART2 channel C on the RK3399 */
 	rk_clrsetreg(&grf->gpio4c_iomux,

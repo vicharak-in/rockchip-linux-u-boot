@@ -74,7 +74,11 @@ static int rockchip_dwmmc_of_to_plat(struct udevice *dev)
 
 	if (priv->fifo_depth < 0)
 		return -EINVAL;
+#ifdef CONFIG_SPL_BUILD
+	priv->fifo_mode = true; // always force fifo mode
+#else
 	priv->fifo_mode = dev_read_bool(dev, "fifo-mode");
+#endif
 
 #ifdef CONFIG_SPL_BUILD
 	if (!priv->fifo_mode)

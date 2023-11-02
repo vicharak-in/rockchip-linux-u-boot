@@ -445,6 +445,8 @@ static void dwc_otg_core_init(struct udevice *dev)
 
 	writel(usbcfg, &regs->gusbcfg);
 
+	mdelay(10);
+
 	/* Program the GAHBCFG Register. */
 	switch (readl(&regs->ghwcfg2) & DWC2_HWCFG2_ARCHITECTURE_MASK) {
 	case DWC2_HWCFG2_ARCHITECTURE_SLAVE_ONLY:

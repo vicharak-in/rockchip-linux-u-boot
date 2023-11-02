@@ -97,6 +97,14 @@ enum {
 	PCLK_DBG_DIV_SHIFT		= 0,
 	PCLK_DBG_DIV_MASK		= 0xF << PCLK_DBG_DIV_SHIFT,
 
+	/* CLKSEL_CON26 */
+	GMAC2PHY_PLL_SEL_SHIFT          = 7,
+	GMAC2PHY_PLL_SEL_MASK           = 1 << GMAC2PHY_PLL_SEL_SHIFT,
+	GMAC2PHY_PLL_SEL_CPLL           = 0,
+	GMAC2PHY_PLL_SEL_GPLL           = 1,
+	GMAC2PHY_CLK_DIV_MASK           = 0x1f,
+	GMAC2PHY_CLK_DIV_SHIFT          = 0,
+
 	/* CLKSEL_CON27 */
 	GMAC2IO_PLL_SEL_SHIFT		= 7,
 	GMAC2IO_PLL_SEL_MASK		= 1 << GMAC2IO_PLL_SEL_SHIFT,
@@ -444,6 +452,39 @@ static ulong rk3328_gmac2io_set_clk(struct rk3328_cru *cru, ulong rate)
 	return ret;
 }
 
+static ulong rk3328_gmac2phy_src_set_clk(struct rk3328_cru *cru, ulong rate)
+{
+	u32 con = readl(&cru->clksel_con[26]);
+	ulong pll_rate;
+	u8 div;
+
+	if ((con >> GMAC2PHY_PLL_SEL_SHIFT) & GMAC2PHY_PLL_SEL_GPLL)
+		pll_rate = GPLL_HZ;
+	else
+		pll_rate = CPLL_HZ;
+
+	div = DIV_ROUND_UP(pll_rate, rate) - 1;
+	if (div <= 0x1f)
+		rk_clrsetreg(&cru->clksel_con[26], GMAC2PHY_CLK_DIV_MASK,
+			     div << GMAC2PHY_CLK_DIV_SHIFT);
+	else
+		debug("Unsupported div for gmac:%d\n", div);
+
+	return DIV_TO_RATE(pll_rate, div);
+}
+
+static ulong rk3328_gmac2phy_set_clk(struct rk3328_cru *cru, ulong rate)
+{
+	struct rk3328_grf_regs *grf;
+
+	grf = syscon_get_first_range(ROCKCHIP_SYSCON_GRF);
+	if (readl(&grf->mac_con[2]) & BIT(10))
+		/* An external clock will always generate the right rate... */
+		return rate;
+	else
+		return rk3328_gmac2phy_src_set_clk(cru, rate);
+}
+
 static ulong rk3328_mmc_get_clk(struct rk3328_cru *cru, uint clk_id)
 {
 	u32 div, con, con_id;
@@ -640,6 +681,12 @@ static ulong rk3328_clk_set_rate(struct clk *clk, ulong rate)
 	case SCLK_MAC2IO:
 		ret = rk3328_gmac2io_set_clk(priv->cru, rate);
 		break;
+	case SCLK_MAC2PHY:
+		ret = rk3328_gmac2phy_set_clk(priv->cru, rate);
+		break;
+	case SCLK_MAC2PHY_SRC:
+		ret = rk3328_gmac2phy_src_set_clk(priv->cru, rate);
+		break;
 	case SCLK_PWM:
 		ret = rk3328_pwm_set_clk(priv->cru, rate);
 		break;
@@ -763,6 +810,43 @@ static int rk3328_gmac2io_ext_set_parent(struct clk *clk, struct clk *parent)
 	return -EINVAL;
 }
 
+static int rk3328_gmac2phy_set_parent(struct clk *clk, struct clk *parent)
+{
+	struct rk3328_grf_regs *grf;
+	const char *clock_output_name;
+	int ret;
+
+	grf = syscon_get_first_range(ROCKCHIP_SYSCON_GRF);
+
+	/*
+	 * If the requested parent is in the same clock-controller and the id
+	 * is SCLK_MAC2PHY_SRC ("clk_mac2phy_src"), switch to the internal clock.
+	 */
+	if ((parent->dev == clk->dev) && (parent->id == SCLK_MAC2PHY_SRC)) {
+		debug("%s: switching MAC CLK to SCLK_MAC2IO_PHY\n", __func__);
+		rk_clrreg(&grf->mac_con[2], BIT(10));
+		return 0;
+	}
+
+	/*
+	 * Otherwise, we need to check the clock-output-names of the
+	 * requested parent to see if the requested id is "phy_50m_out".
+	 */
+	ret = dev_read_string_index(parent->dev, "clock-output-names",
+				    parent->id, &clock_output_name);
+	if (ret < 0)
+		return -ENODATA;
+
+	/* If this is "phy_50m_out", switch to the external clock input */
+	if (!strcmp(clock_output_name, "phy_50m_out")) {
+		debug("%s: switching MAC CLK to PHY_50M_OUT\n", __func__);
+		rk_setreg(&grf->mac_con[2], BIT(10));
+		return 0;
+	}
+
+	return -EINVAL;
+}
+
 static int rk3328_clk_set_parent(struct clk *clk, struct clk *parent)
 {
 	switch (clk->id) {
@@ -770,6 +854,8 @@ static int rk3328_clk_set_parent(struct clk *clk, struct clk *parent)
 		return rk3328_gmac2io_set_parent(clk, parent);
 	case SCLK_MAC2IO_EXT:
 		return rk3328_gmac2io_ext_set_parent(clk, parent);
+	case SCLK_MAC2PHY:
+		return rk3328_gmac2phy_set_parent(clk, parent);
 	case DCLK_LCDC:
 	case SCLK_PDM:
 	case SCLK_RTC32K:

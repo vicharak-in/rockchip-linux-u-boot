@@ -35,6 +35,12 @@ static int nvme_wait_ready(struct nvme_dev *dev, bool enabled)
 
 	/* Timeout field in the CAP register is in 500 millisecond units */
 	timeout = NVME_CAP_TIMEOUT(dev->cap) * 500;
+	
+	#ifdef CONFIG_TARGET_PINEBOOK_PRO_RK3399
+	/* Some NVMe SSDs on Pinebook Pro don't become ready before timeout expires.
+	   Workaround: increase timeout */
+	timeout *= 2;
+	#endif
 
 	start = get_timer(0);
 	while (get_timer(start) < timeout) {

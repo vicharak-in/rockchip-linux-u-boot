@@ -435,6 +435,31 @@ config ROCKCHIP_SPI_IMAGE
 config LNX_KRNL_IMG_TEXT_OFFSET_BASE
 	default SYS_TEXT_BASE
 
+config ROCKCHIP_ADVANCED_RECOVERY
+	bool "Advanced recovery button for Rockchip boards"
+	default n
+
+config ROCKCHIP_ADVANCED_RECOVERY_LED
+	string "Advanced recovery button for Rockchip boards - toggled led label"
+	depends on ROCKCHIP_ADVANCED_RECOVERY
+
+config ROCKCHIP_ADVANCED_RECOVERY_UMS
+	bool "Advanced recovery for Rockchip boards - UMS support"
+	depends on ROCKCHIP_ADVANCED_RECOVERY
+	depends on CMD_USB_MASS_STORAGE
+	default y if ROCKCHIP_ADVANCED_RECOVERY
+
+config ROCKCHIP_ADVANCED_RECOVERY_ROCKUSB
+	bool "Advanced recovery for Rockchip boards - ROCKUSB support"
+	depends on ROCKCHIP_ADVANCED_RECOVERY
+	depends on CMD_ROCKUSB
+	default y if ROCKCHIP_ADVANCED_RECOVERY
+
+config ROCKCHIP_ADVANCED_RECOVERY_MASKROM
+	bool "Advanced recovery for Rockchip boards - MASKROM support"
+	depends on ROCKCHIP_ADVANCED_RECOVERY
+	default y if ROCKCHIP_ADVANCED_RECOVERY
+
 source "arch/arm/mach-rockchip/px30/Kconfig"
 source "arch/arm/mach-rockchip/rk3036/Kconfig"
 source "arch/arm/mach-rockchip/rk3066/Kconfig"

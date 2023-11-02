@@ -1394,7 +1394,7 @@ static int rk3399_clk_probe(struct udevice *dev)
 	}
 #endif
 
-	if (init_clocks)
+	if (init_clocks || 1 == 1)
 		rkclk_init(priv->cru);
 
 	return 0;

@@ -18,6 +18,10 @@
 #define CONFIG_SPL_BSS_START_ADDR	0x2000000
 #define CONFIG_SPL_BSS_MAX_SIZE		0x2000
 
+#define CONFIG_MISC 1
+#define CONFIG_MISC_INIT_R 1
+#define CONFIG_ROCKCHIP_EFUSE 1
+
 #define CONFIG_SYS_BOOTM_LEN	(64 << 20)	/* 64M */
 
 /* FAT sd card locations. */

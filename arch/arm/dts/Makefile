@@ -120,11 +120,14 @@ dtb-$(CONFIG_ROCKCHIP_RK3288) += \
 
 dtb-$(CONFIG_ROCKCHIP_RK3308) += \
 	rk3308-evb.dtb \
-	rk3308-roc-cc.dtb
+	rk3308-roc-cc.dtb \
+	rk3308-rock-pi-s.dtb
 
 dtb-$(CONFIG_ROCKCHIP_RK3328) += \
 	rk3328-evb.dtb \
 	rk3328-nanopi-r2s.dtb \
+	rk3328-orangepi-r1-plus.dtb \
+	rk3328-orangepi-r1-plus-lts.dtb \
 	rk3328-roc-cc.dtb \
 	rk3328-rock64.dtb \
 	rk3328-rock-pi-e.dtb
@@ -136,11 +139,13 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
 	rk3368-px5-evb.dtb \
 
 dtb-$(CONFIG_ROCKCHIP_RK3399) += \
+	rk3399-clockworkpi-a06.dtb \
 	rk3399-evb.dtb \
 	rk3399-ficus.dtb \
 	rk3399-firefly.dtb \
 	rk3399-gru-bob.dtb \
 	rk3399-gru-kevin.dtb \
+	rk3399-kobol-helios64.dtb \
 	rk3399-khadas-edge.dtb \
 	rk3399-khadas-edge-captain.dtb \
 	rk3399-khadas-edge-v.dtb \
@@ -149,9 +154,11 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
 	rk3399-nanopi-m4.dtb \
 	rk3399-nanopi-m4-2gb.dtb \
 	rk3399-nanopi-m4b.dtb \
+	rk3399-nanopi-m4v2.dtb \
 	rk3399-nanopi-neo4.dtb \
 	rk3399-nanopi-r4s.dtb \
 	rk3399-orangepi.dtb \
+	rk3399-orangepi-4.dtb \
 	rk3399-pinebook-pro.dtb \
 	rk3399-puma-haikou.dtb \
 	rk3399-roc-pc.dtb \
