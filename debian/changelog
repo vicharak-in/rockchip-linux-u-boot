@@ -1,3 +1,22 @@
+u-boot-rk3399-vaaman (1.1.3) focal; urgency=medium
+
+  * board: rockchip: vaaman: Reduce ADC threshold for recovery key
+  * u-boot-vicharak: debian: Update deb packaging scripts
+  * u-boot-vicharak: Auto set ARM32 and ARM64 cross-compilers in make script
+  * u-boot-vicharak: Always build idblock binary from make script
+  * u-boot-vicharak: Add u-boot-scripts v1.0.0 submodule
+  * u-boot-vicharak: Remove old vicharak u-boot build script
+  * BACKPORT: cmd: pxe: Use internal FDT if retrieving from FDTDIR fails
+  * board: rk3399_vaaman: Fix recovery key ADC channel
+  * board: rk3399_vaaman: Set default LEDs state for Vaaman
+  * configs: vaaman: Enable u-boot LEDs support
+  * configs: vaaman: Remove unused Vaaman android u-boot config
+  * board: vaaman: Do not initialize PWM controllers on board init
+  * mmc: Improve mmc_init error during no card detection
+  * configs: vaaman: Disable FAN53555 regulator
+
+ -- UtsavBalar1231 <utsavbalar1231@gmail.com>  Sat, 04 Nov 2023 11:40:48 +0530
+
 u-boot-rk3399-vaaman (1.1.2) focal; urgency=medium
 
   [ shengfei Xu ]
