@@ -25,6 +25,9 @@ DECLARE_GLOBAL_DATA_PTR;
 #define RK3399_CPUID_OFF 0x7
 #define RK3399_CPUID_LEN 0x10
 
+#define KEY_DOWN_MIN_VAL        0
+#define KEY_DOWN_MAX_VAL        30
+
 int rk_board_init(void)
 {
 	struct udevice *pinctrl, *regulator;
@@ -103,13 +106,11 @@ int rockchip_dnl_key_pressed(void)
 	unsigned int id_val;
 
 	if (adc_channel_single_shot("saradc", 1, &id_val)) {
-		printf("%s read recovery key failed\n", __func__);
+		printf("%s read adc recovery key failed\n", __func__);
 		return false;
 	}
 
-	printf("%s recovery key: %d\n", __func__, id_val);
-
-	if (id_val >= 0 && id_val < 20)
+	if (id_val >= KEY_DOWN_MIN_VAL && id_val <= KEY_DOWN_MAX_VAL)
 		return true;
 
 	return false;
