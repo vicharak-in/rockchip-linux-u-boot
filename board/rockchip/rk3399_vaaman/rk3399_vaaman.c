@@ -9,16 +9,15 @@
 #include <dm.h>
 #include <misc.h>
 #include <ram.h>
+#include <asm/arch/periph.h>
+#include <asm/gpio.h>
+#include <asm/setup.h>
 #include <dm/pinctrl.h>
 #include <dm/uclass-internal.h>
-#include <asm/setup.h>
-#include <asm/arch/periph.h>
+#include <dwc3-uboot.h>
 #include <power/regulator.h>
 #include <u-boot/sha256.h>
 #include <usb.h>
-#include <dwc3-uboot.h>
-#include <spl.h>
-#include <led.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -28,10 +27,49 @@ DECLARE_GLOBAL_DATA_PTR;
 #define KEY_DOWN_MIN_VAL        0
 #define KEY_DOWN_MAX_VAL        30
 
+#ifdef CONFIG_LED
+#define STATUS_LED_GPIO	124 // GPIO3_D4
+#define POWER_LED_GPIO	125 // GPIO3_D5
+
+static int setup_gpio_leds(const int status, const int power)
+{
+	int ret = 0;
+
+	if (status) {
+		ret = gpio_request(STATUS_LED_GPIO, "status_led");
+		if (ret) {
+			printf("request gpio %d failed\n", STATUS_LED_GPIO);
+			return ret;
+		}
+
+		gpio_direction_output(STATUS_LED_GPIO, 1);
+		gpio_set_value(STATUS_LED_GPIO, 1);
+	}
+
+	if (power) {
+		ret = gpio_request(POWER_LED_GPIO, "power_led");
+		if (ret) {
+			printf("request gpio %d failed\n", POWER_LED_GPIO);
+			return ret;
+		}
+
+		gpio_direction_output(POWER_LED_GPIO, 1);
+		gpio_set_value(POWER_LED_GPIO, power);
+	}
+
+	return ret;
+}
+#endif
+
+
 int rk_board_init(void)
 {
 	struct udevice *pinctrl, *regulator;
 	int ret;
+
+#ifdef CONFIG_LED
+	setup_gpio_leds(1, 1);
+#endif
 
 	/*
 	 * The PWM does not have decicated interrupt number in dts and can
@@ -60,47 +98,6 @@ out:
 	return 0;
 }
 
-#ifdef CONFIG_LED
-static int set_leds(int status)
-{
-	struct udevice *status_led, *power_led;
-	int ret;
-
-	ret = led_get_by_label("status", &status_led);
-	if (ret) {
-		printf("LEDS: Can't find status led\n");
-		return ret;
-	}
-
-	ret = led_get_by_label("power", &power_led);
-	if (ret) {
-		printf("LEDS: Can't find power led\n");
-		return ret;
-	}
-
-	ret = led_set_state(status_led, status);
-	if (ret) {
-		printf("LEDS: set status led failed\n");
-		return ret;
-	}
-
-	ret = led_set_state(power_led, status);
-	if (ret) {
-		printf("LEDS: set power led failed\n");
-		return ret;
-	}
-
-	return 0;
-}
-#endif
-
-void do_board_download(void)
-{
-#ifdef CONFIG_LED
-	set_leds(0);
-#endif
-}
-
 int rockchip_dnl_key_pressed(void)
 {
 	unsigned int id_val;
@@ -115,6 +112,16 @@ int rockchip_dnl_key_pressed(void)
 
 	return false;
 }
+
+// int board_early_init_f(void)
+// {
+// #ifdef CONFIG_LED
+// 	// Turn on power led
+// 	setup_gpio_leds(0, 1);
+// #endif
+//
+// 	return 0;
+// }
 
 static void setup_macaddr(void)
 {
@@ -211,8 +218,8 @@ int misc_init_r(void)
 	setup_macaddr();
 
 #ifdef CONFIG_LED
-	// Init leds
-	set_leds(1);
+	// Turn on both leds
+	setup_gpio_leds(1, 1);
 #endif
 
 	return 0;
@@ -255,3 +262,12 @@ int board_usb_init(int index, enum usb_init_type init)
 	return dwc3_uboot_init(&dwc3_device_data);
 }
 #endif
+
+int rk_board_late_init(void)
+{
+#ifdef CONFIG_LED
+	// Turn on both leds
+	setup_gpio_leds(1, 1);
+#endif
+	return 0;
+}
