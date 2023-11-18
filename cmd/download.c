@@ -21,7 +21,7 @@ static int do_download(cmd_tbl_t *cmdtp, int flag,
 	do_board_download();
 
 	/* Generic download */
-#ifdef CONFIG_CMD_ROCKUSB
+#if defined(CONFIG_CMD_ROCKUSB) && !defined(CONFIG_TARGET_RK3399_VAAMAN)
 	run_command("rockusb 0 $devtype $devnum", 0);
 #endif
 	printf("Enter rockusb failed, fallback to bootrom...\n");
