@@ -18,13 +18,14 @@
 #include <mapmem.h>
 #include <asm/io.h>
 #include <sysmem.h>
+#include <boot_rkimg.h>
 
 #ifndef CONFIG_SYS_FDT_PAD
 #define CONFIG_SYS_FDT_PAD 0x3000
 #endif
 
 /* adding a ramdisk needs 0x44 bytes in version 2008.10 */
-#define FDT_RAMDISK_OVERHEAD	0x80
+#define FDT_RAMDISK_OVERHEAD 0x80
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -220,38 +221,118 @@ int boot_fdt_add_sysmem_rsv_regions(void *fdt_blob)
 }
 #endif
 
-static int uboot_set_rootdevice(void)
+#define ROOTFS_PARTITION "rootfs"
+
+static int get_partition_unique_uuid(char *partition, char *guid_buf,
+				     size_t guid_buf_size)
 {
-    const char *rootnvme0 = "root=/dev/nvme0n1p8"; /* NVMe Boot */
-    const char *rootmmc0 = "root=/dev/mmcblk0p8"; /* eMMC Boot */
-    const char *rootmmc1 = "root=/dev/mmcblk1p8"; /* SDcard Boot */
-    int ret = -EINVAL;
+	struct blk_desc *dev_desc;
+	disk_partition_t part_info;
 
-    char *devtype = env_get("devtype");
-    char *devnum = env_get("devnum");
+	dev_desc = rockchip_get_bootdev();
+	if (!dev_desc) {
+		printf("%s: Could not find device\n", __func__);
+		return -EINVAL;
+	}
 
-    if (!devtype || !devnum)
-        return ret;
+	if (part_get_info_by_name(dev_desc, partition, &part_info) < 0) {
+		printf("%s: Could not find \"%s\" partition\n", __func__,
+		       partition);
+		return -EINVAL;
+	}
 
-    if (!strncmp(devtype, "nvme", strlen("nvme"))) {
-        if (!strncmp(devnum, "0", strlen("0"))) {
-            printf("Set %s\n", rootnvme0);
-            env_update("bootargs", rootnvme0);
-            ret = 0;
-        }
-    } else if (!strncmp(devtype, "mmc", strlen("mmc"))) {
-        if (!strncmp(devnum, "0", strlen("0"))) {
-            printf("Set %s\n", rootmmc0);
-            env_update("bootargs", rootmmc0);
-            ret = 0;
-        } else if (!strncmp(devnum, "1", strlen("1"))) {
-            printf("Set %s\n", rootmmc1);
-            env_update("bootargs", rootmmc1);
-            ret = 0;
-        }
-    }
+	if (guid_buf && guid_buf_size > 0)
+		memcpy(guid_buf, part_info.uuid, guid_buf_size);
 
-    return ret;
+	return 0;
+}
+
+static void uboot_set_root_uuid(void)
+{
+	char root_partuuid[70] = "root=PARTUUID=";
+	char guid_buf[UUID_SIZE] = { 0 };
+	struct blk_desc *dev_desc;
+
+	dev_desc = rockchip_get_bootdev();
+	if (!dev_desc) {
+		printf("%s: Could not find device\n", __func__);
+		return;
+	}
+
+	get_partition_unique_uuid(ROOTFS_PARTITION, guid_buf, UUID_SIZE);
+
+	if (memcmp(guid_buf, "\0\0\0\0", UUID_SIZE) != 0) {
+		printf("%s: PARTUUID of %s is %s\n", __func__, ROOTFS_PARTITION,
+		       guid_buf);
+
+		strcat(root_partuuid, guid_buf);
+		env_update("bootargs", root_partuuid);
+	}
+}
+
+static void uboot_set_rootdevice(void)
+{
+	char root_part_dev[64] = { 0 };
+	disk_partition_t part_info;
+	struct blk_desc *dev_desc;
+	const char *part_type;
+	int part_num;
+
+	dev_desc = rockchip_get_bootdev();
+	if (!dev_desc) {
+		printf("%s: Could not find boot device\n", __func__);
+		return;
+	}
+
+	/* Get 'rootfs' partition device number. */
+	part_num =
+		part_get_info_by_name(dev_desc, ROOTFS_PARTITION, &part_info);
+	if (part_num < 0) {
+		printf("%s: Failed to get partition '%s'.\n", __func__,
+		       ROOTFS_PARTITION);
+		return;
+	}
+
+	/* Get partition type. */
+	part_type = part_get_type(dev_desc);
+	if (!part_type) {
+		printf("%s: Failed to get %s partition type.\n", __func__,
+		       ROOTFS_PARTITION);
+		return;
+	}
+
+	/* Judge the partition device type. */
+	switch (dev_desc->if_type) {
+	case IF_TYPE_NVME:
+		if (strstr(part_type, "ENV"))
+			snprintf(root_part_dev, 64, "root=/dev/nvme%dn1p%d",
+				 dev_desc->devnum, part_num);
+		else if (strstr(part_type, "EFI"))
+			uboot_set_root_uuid();
+		break;
+	case IF_TYPE_MMC:
+		if (strstr(part_type, "ENV")) {
+			if (dev_desc->devnum == 1)
+				snprintf(root_part_dev, 64, "root=/dev/mmcblk1p%d",
+					 part_num);
+			else if (dev_desc->devnum == 0)
+				snprintf(root_part_dev, 64, "root=/dev/mmcblk0p%d",
+					 part_num);
+			else
+				printf("%s: Not found part type, failed to set root part device.\n",
+					   __func__);
+		} else if (strstr(part_type, "EFI")) {
+			uboot_set_root_uuid();
+		}
+		break;
+	default:
+		printf("%s: Not found part type, failed to set root part device.\n",
+		       __func__);
+		return;
+	}
+
+	printf("%s: Set root device = %s\n", __func__, root_part_dev);
+	env_update("bootargs", root_part_dev);
 }
 
 /**
@@ -280,9 +361,7 @@ int boot_relocate_fdt(struct lmb *lmb, char **of_flat_tree, ulong *of_size)
 	int	err;
 	int	disable_relocation = 0;
 
-	err = uboot_set_rootdevice();
-	if (err)
-		printf("%s: Failed to set root device\n", __func__);
+	uboot_set_rootdevice();
 
 	/* nothing to do */
 	if (*of_size == 0)
