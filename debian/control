@@ -1,8 +1,8 @@
-Source: u-boot-rk3399-vaaman
+Source: u-boot-vicharak
 Section: admin
 Priority: optional
 Standards-Version: 4.6.0
-Maintainer: UtsavBalar1231 <utsavbalar1231@gmail.com>
+Maintainer: shailparmar03 <shailparmar26@gmail.com>
 Build-Depends: debhelper-compat (= 12), parted, bc, bison, flex, device-tree-compiler, udev
 Vcs-Git: https://github.com/vicharak/u-boot-vicharak.git
 
@@ -13,6 +13,19 @@ Provides: u-boot-rk3399-vaaman
 Replaces: u-boot-rk3399-vaaman
 Conflicts: u-boot-rk3399-vaaman
 Description: A boot loader for the Vicharak Vaaman board.
+ Das U-Boot is a cross-platform bootloader for embedded systems,
+ used as the default boot loader by several board vendors.  It is
+ intended to be easy to port and to debug, and runs on many
+ supported architectures, including PPC, ARM, MIPS, x86, m68k,
+ NIOS, and Microblaze.ackage: u-boot-rk3399-vaaman
+
+Package: u-boot-rk3588-axon
+Architecture: arm64
+Priority: optional
+Provides: u-boot-rk3588-axon
+Replaces: u-boot-rk3588-axon
+Conflicts: u-boot-rk3588-axon
+Description: A boot loader for the Vicharak Axon board.
  Das U-Boot is a cross-platform bootloader for embedded systems,
  used as the default boot loader by several board vendors.  It is
  intended to be easy to port and to debug, and runs on many
