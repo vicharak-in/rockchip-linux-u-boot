@@ -1,3 +1,9 @@
+u-boot-vicharak (1.1.6) UNRELEASED; urgency=medium
+
+  * Add support for Axon
+
+ -- shailparmar03 <shailparmar26@gmail.com>  Sat, 25 May 2024 18:06:41 +0530
+
 u-boot-vicharak (1.1.5) focal; urgency=medium
 
   * cmd: rockusb: Allow mmc1 to enter rockusb

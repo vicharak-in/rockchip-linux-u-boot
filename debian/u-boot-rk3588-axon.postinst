@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+__get_root_dev() {
+	realpath "$(findmnt --nofsroot --noheadings --output SOURCE /)"
+}
+
+__get_block_dev() {
+	echo "/dev/$(udevadm info --query=path "--name=$(__get_root_dev)" | awk -F'/' '{print $(NF-1)}')"
+}
+
+dev=$(__get_block_dev)
+
+if [ -z "$dev" ]; then
+	echo "No block device found for $1" >&2
+	exit 1
+fi
+
+uboot_part=$(parted -s "${dev}" print | grep "uboot" | awk '{print $1}')
+
+if [ -z "$uboot_part" ]; then
+	echo "No partition found for $1" >&2
+	exit 1
+fi
+
+case "$1" in
+configure | upgrade)
+	sudo dd if=/usr/lib/u-boot/rk3588-axon/idbloader.img of="${dev}" seek=64
+	sudo dd if=/usr/lib/u-boot/rk3588-axon/u-boot.img of="${dev}"p"${uboot_part}"
+	sync
+	;;
+
+abort-upgrade | abort-remove | abort-deconfigure) ;;
+
+*)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0
