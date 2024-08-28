@@ -61,8 +61,8 @@
 /* First try to boot from SD (index 1), then eMMC (index 0) */
 #if CONFIG_IS_ENABLED(CMD_MMC)
 	#define BOOT_TARGET_MMC(func) \
-		func(MMC, mmc, 0) \
-		func(MMC, mmc, 1)
+		func(MMC, mmc, 1) \
+		func(MMC, mmc, 0)
 #else
 	#define BOOT_TARGET_MMC(func)
 #endif
@@ -158,10 +158,10 @@
 	"rkimg_bootdev=" \
 	"if nvme dev 0; then " \
 		"setenv devtype nvme; setenv devnum 0; echo Booting from NVMe;" \
-	"elif mmc dev 0 && rkimgtest mmc 0; then " \
-		"setenv devtype mmc; setenv devnum 0; echo Booting from SDcard;" \
-	"elif mmc dev 1; then " \
-		"setenv devtype mmc; setenv devnum 1; echo Booting from eMMC;" \
+	"elif mmc dev 1 && rkimgtest mmc 1; then " \
+		"setenv devtype mmc; setenv devnum 1; echo Booting from SDcard;" \
+	"elif mmc dev 0; then " \
+		"setenv devtype mmc; setenv devnum 0; echo Booting from eMMC;" \
 	"elif mtd_blk dev 0; then " \
 		"setenv devtype mtd; setenv devnum 0;" \
 	"elif mtd_blk dev 1; then " \
