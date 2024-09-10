@@ -220,40 +220,6 @@ int boot_fdt_add_sysmem_rsv_regions(void *fdt_blob)
 }
 #endif
 
-static int uboot_set_rootdevice(void)
-{
-    const char *rootnvme0 = "root=/dev/nvme0n1p8"; /* NVMe Boot */
-    const char *rootmmc0 = "root=/dev/mmcblk0p8"; /* eMMC Boot */
-    const char *rootmmc1 = "root=/dev/mmcblk1p8"; /* SDcard Boot */
-    int ret = -EINVAL;
-
-    char *devtype = env_get("devtype");
-    char *devnum = env_get("devnum");
-
-    if (!devtype || !devnum)
-        return ret;
-
-    if (!strncmp(devtype, "nvme", strlen("nvme"))) {
-        if (!strncmp(devnum, "0", strlen("0"))) {
-            printf("Set %s\n", rootnvme0);
-            env_update("bootargs", rootnvme0);
-            ret = 0;
-        }
-    } else if (!strncmp(devtype, "mmc", strlen("mmc"))) {
-        if (!strncmp(devnum, "0", strlen("0"))) {
-            printf("Set %s\n", rootmmc0);
-            env_update("bootargs", rootmmc0);
-            ret = 0;
-        } else if (!strncmp(devnum, "1", strlen("1"))) {
-            printf("Set %s\n", rootmmc1);
-            env_update("bootargs", rootmmc1);
-            ret = 0;
-        }
-    }
-
-    return ret;
-}
-
 /**
  * boot_relocate_fdt - relocate flat device tree
  * @lmb: pointer to lmb handle, will be used for memory mgmt
@@ -279,10 +245,6 @@ int boot_relocate_fdt(struct lmb *lmb, char **of_flat_tree, ulong *of_size)
 	ulong	of_len = 0;
 	int	err;
 	int	disable_relocation = 0;
-
-	err = uboot_set_rootdevice();
-	if (err)
-		printf("%s: Failed to set root device\n", __func__);
 
 	/* nothing to do */
 	if (*of_size == 0)
