@@ -6,11 +6,11 @@
 
 /dts-v1/;
 #include "rk3588.dtsi"
-#include "rk3588-u-boot.dtsi"
+#include "rk3588-axon-u-boot.dtsi"
 #include <dt-bindings/input/input.h>
 
 / {
-	model = "Vicharak RK3588 AXON VO.1";
+	model = "Vicharak RK3588 AXON VO.3";
 	compatible = "vicharak,rk3588-axon", "rockchip,rk3588";
 
 	// ADC Keys: {{{
@@ -74,34 +74,6 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
-	vcc3v3_pcie2x1l2: vcc3v3-pcie2x1l2 {
-		u-boot,dm-pre-reloc;
-		compatible = "regulator-fixed";
-		regulator-name = "vcc3v3_pcie2x1l2";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <5000>;
-		regulator-boot-on;
-		regulator-always-on;
-		enable-active-high;
-		gpio = <&pca9554 PCA_IOE_2 GPIO_ACTIVE_HIGH>;
-		vin-supply = <&vcc5v0_sys>;
-	};
-
-	vcc3v3_pcie2x1l0l1: vcc3v3-pcie2x1l0 {
-		u-boot,dm-pre-reloc;
-		compatible = "regulator-fixed";
-		regulator-name = "vcc3v3_pcie2x1l0l1";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <5000>;
-		regulator-boot-on;
-		regulator-always-on;
-		enable-active-high;
-		gpio = <&pca9554 PCA_IOE_0 GPIO_ACTIVE_HIGH>;
-		vin-supply = <&vcc5v0_sys>;
-	};
-
 	vcc3v3_pcie3x4: vcc3v3-pcie3x4 {
 		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
@@ -111,9 +83,9 @@
 		regulator-boot-on;
 		regulator-always-on;
 		enable-active-high;
-		gpio = <&pca9554 PCA_IOE_1 GPIO_ACTIVE_HIGH>;
-		startup-delay-us = <5000>;
-		vin-supply = <&vcc5v0_sys>;
+		gpio = <&gpio0 RK_PB2 GPIO_ACTIVE_HIGH>;
+		//startup-delay-us = <5000>;
+		vin-supply = <&vcc12v_dcin>;
 	};
 
 	vcc5v0_typec1: vcc5v0-typec1-regulator {
@@ -200,30 +172,6 @@
 // End of I2C6 }}}
 
 // PCIE: {{{
-// fe190000: Standard SATA only (PCIE20_0)
-&pcie2x1l2 {
-	u-boot,dm-pre-reloc;
-	reset-gpios = <&pca9554 PCA_IOE_2 GPIO_ACTIVE_HIGH>;
-	vpcie3v3-supply = <&vcc3v3_pcie2x1l2>;
-	status = "okay";
-};
-
-// fe170000: (PCIE20_2)
-&pcie2x1l0 {
-	u-boot,dm-pre-reloc;
-	reset-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
-	vpcie3v3-supply = <&vcc3v3_pcie2x1l0l1>;
-	status = "okay";
-};
-
-// fe180000: (PCIE20_1) Tested sata2
-&pcie2x1l1 {
-	u-boot,dm-pre-reloc;
-	reset-gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
-	vpcie3v3-supply = <&vcc3v3_pcie2x1l0l1>;
-	status = "okay";
-};
-
 // PCIE 3.0 - 4 slots: {{{
 &pcie30phy {
 	u-boot,dm-pre-reloc;
@@ -234,6 +182,7 @@
 &pcie3x4 {
 	u-boot,dm-pre-reloc;
 	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+	pinctrl-0 = <&pcie3x4_reset>;
 	vpcie3v3-supply = <&vcc3v3_pcie3x4>;
 	status = "okay";
 };
@@ -283,6 +232,15 @@
 		};
 	};
 	// End of Leds }}}
+
+	// PCIE 3.0: {{{
+	pcie3x4 {
+		pcie3x4_reset: pcie3x4-reset {
+			rockchip,pins =
+						<4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+	// End of PCIE 3.0
 };
 // End of Pinctrl }}}
 
